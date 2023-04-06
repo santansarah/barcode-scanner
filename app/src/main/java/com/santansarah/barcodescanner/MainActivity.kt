@@ -12,14 +12,25 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
+import coil.ImageLoader
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.santansarah.barcodescanner.data.remote.FoodRepository
+import com.santansarah.barcodescanner.data.remote.ItemListing
+import com.santansarah.barcodescanner.data.remote.mock.cornChips
+import com.santansarah.barcodescanner.domain.models.AppDestinations.HOME
+import com.santansarah.barcodescanner.ui.AppNavGraph
 import com.santansarah.barcodescanner.ui.theme.BarcodeScannerTheme
+import com.santansarah.barcodescanner.ui.ItemDetails
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import retrofit2.Retrofit
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -30,6 +41,9 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var foodRepository: FoodRepository
+
+    @Inject
+    lateinit var imageLoader: ImageLoader
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,9 +59,38 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
 
-                    Column {
+                    AppNavGraph(navController = rememberNavController(), startDestination = HOME)
 
-                        Button(onClick = { barcodeScanner.startScan() }) {
+
+/*
+                    AsyncImage(model = imageLoader.enqueue(
+                        ImageRequest.Builder(LocalContext.current)
+                            .data("https://images.openfoodfacts.org/images/products/007/874/208/1304/nutrition_en.9.400.jpg")
+                            .build()
+                    ), contentDescription = "")
+
+                    AsyncImage(model = ImageRequest.Builder(LocalContext.current)
+                            .data("https://images.openfoodfacts.org/images/products/007/874/208/1304/nutrition_en.9.400.jpg")
+                            .build()
+                    , contentDescription = "")
+*/
+
+                    /*Column {
+
+                        *//*val item = Json {
+                            ignoreUnknownKeys = true
+                        }.decodeFromString<ItemListing>(cornChips)
+
+                        BarcodeScannerTheme {
+                            ItemDetails(itemListing = item)
+                        }*//*
+
+                        val scope = rememberCoroutineScope()
+                        Button(onClick = {
+                            scope.launch {
+                                barcodeScanner.startScan()
+                            }
+                        }) {
                             Text(text = "Scan Item")
                         }
 
@@ -62,7 +105,7 @@ class MainActivity : ComponentActivity() {
                                     foodRepository.getInfoByBarCode(it)
                             }
                         }
-                    }
+                    }*/
                 }
             }
         }

@@ -14,6 +14,6 @@ interface FoodApi {
     @GET("product/{barCode}")
     suspend fun getInfoByBarCode(
         @Header("Authorization") authorization: String = basic,
-        @Path("barCode") barCode: String): Listing
+        @Path("barCode") barCode: String): ItemListing
 
 }

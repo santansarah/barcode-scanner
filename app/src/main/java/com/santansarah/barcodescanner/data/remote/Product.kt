@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 data class Product(
     val allergens: String,
     val brands: String,
-    @SerialName("ingredients_text_with_allergens_en") val ingredients: String,
+    @SerialName("ingredients_text_with_allergens_en") val ingredients: String? = null,
     val nutriments: Nutriments,
     @SerialName("product_name") val productName: String,
     @SerialName("serving_size") val servingSize: String,

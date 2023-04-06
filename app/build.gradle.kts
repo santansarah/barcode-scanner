@@ -68,11 +68,17 @@ dependencies {
     implementation(libs.material3)
 
     implementation(libs.codescanner)
-    implementation(libs.hiltAndroid)
+    implementation(libs.bundles.hilt)
     kapt(libs.hiltCompiler)
+
     implementation(libs.bundles.retrofit)
+    implementation(libs.httpLogging)
     implementation(libs.kotlinxSerialization)
     implementation(libs.timber)
+    implementation(libs.bundles.coil)
+    implementation(libs.gpsCoroutines)
+    implementation(libs.navigationCompose)
+    implementation(libs.lifecycle)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)

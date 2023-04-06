@@ -1,5 +1,7 @@
 package com.santansarah.barcodescanner.data.remote
 
+import com.santansarah.barcodescanner.domain.ErrorCode
+import com.santansarah.barcodescanner.utils.ServiceResult
 import retrofit2.HttpException
 import timber.log.Timber
 import java.io.IOException
@@ -11,17 +13,14 @@ class FoodRepository @Inject constructor(
     private val api: FoodApi
 ) {
 
-    suspend fun getInfoByBarCode(barCode: String): Listing {
+    suspend fun getInfoByBarCode(barCode: String): ServiceResult<ItemListing> {
         return try {
-            val result = api.getInfoByBarCode(barCode=barCode)
+            val result = api.getInfoByBarCode(barCode = barCode)
             Timber.d(result.toString())
-            return result
-        } catch(e: IOException) {
+            ServiceResult.Success(result)
+        } catch (e: Exception) {
             e.printStackTrace()
-            return Listing("", 0, "")
-        } catch(e: HttpException) {
-            e.printStackTrace()
-            Listing("", 0, "")
+            ServiceResult.Error(ErrorCode.API_ERROR)
         }
     }
 }

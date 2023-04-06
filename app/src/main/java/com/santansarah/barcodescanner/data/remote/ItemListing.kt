@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Listing(
+data class ItemListing(
     val code: String,
     val product: Product,
     val status: Int,
