@@ -26,7 +26,7 @@ fun AppNavGraph(
             )
         }
         composable(PRODUCT_DETAIL) {
-            ItemDetails()
+            ProductDetailsRoute(onBackClicked = {navController.popBackStack()})
         }
     }
 }

@@ -1,4 +1,8 @@
 package com.santansarah.barcodescanner.utils
 
-fun Double.toMgs() = (this * 1000).toInt()
-fun Double?.valueOrZero() = this ?: 0
+import kotlin.math.roundToInt
+
+fun Double?.toMgs() = "%.1f".format(this?.times(1000) ?: 0.00f)
+
+
+fun Double?.valueOrZero() = (this ?: 0).toString()

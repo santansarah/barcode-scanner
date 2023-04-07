@@ -31,6 +31,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
+import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -59,7 +60,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
 
-                    AppNavGraph(navController = rememberNavController(), startDestination = HOME)
+                   AppNavGraph(navController = rememberNavController(), startDestination = HOME)
 
 
 /*

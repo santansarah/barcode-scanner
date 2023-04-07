@@ -15,7 +15,22 @@ class FoodRepository @Inject constructor(
 
     suspend fun getInfoByBarCode(barCode: String): ServiceResult<ItemListing> {
         return try {
-            val result = api.getInfoByBarCode(barCode = barCode)
+            val result = api.getInfoByBarCode(
+                barCode = barCode,
+                fields = Product.fields.joinToString(","))
+            Timber.d(result.toString())
+            ServiceResult.Success(result)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            ServiceResult.Error(ErrorCode.API_ERROR)
+        }
+    }
+
+    suspend fun getSearchResults(searchText: String): ServiceResult<SearchResults> {
+        return try {
+            val result = api.searchProducts(
+                searchText = searchText,
+                fields = SearchProductItem.fields.joinToString(","))
             Timber.d(result.toString())
             ServiceResult.Success(result)
         } catch (e: Exception) {

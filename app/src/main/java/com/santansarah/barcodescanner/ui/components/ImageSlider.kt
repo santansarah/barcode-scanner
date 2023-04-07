@@ -65,7 +65,7 @@ fun ItemImageSlider(
             shape = RoundedCornerShape(12.dp),
             elevation = CardDefaults.cardElevation(6.dp),
             modifier = Modifier
-                .size(280.dp)
+                .size(260.dp)
                 .clickable(
                     onClick = { }
                 )
@@ -89,14 +89,14 @@ fun ItemImageSlider(
                     ) {
                         when (painter.state) {
                             is AsyncImagePainter.State.Loading -> CircularProgressIndicator()
-                            is AsyncImagePainter.State.Error -> painterResource(id = R.drawable.coil_placeholder)
+                            is AsyncImagePainter.State.Error -> painterResource(id = R.drawable.image_placeholder)
                             is AsyncImagePainter.State.Success -> SubcomposeAsyncImageContent()
                             else -> {
-                                painterResource(id = R.drawable.coil_placeholder)
+                                painterResource(id = R.drawable.image_placeholder)
                             }
                         }
                     }
-                } ?: Image(painter = painterResource(id = R.drawable.coil_placeholder),
+                } ?: Image(painter = painterResource(id = R.drawable.image_placeholder),
                     contentDescription = "Image not found.")
             }
         }
