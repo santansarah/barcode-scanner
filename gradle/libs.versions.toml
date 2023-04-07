@@ -20,6 +20,8 @@ gpsCoroutines = "1.6.4"
 navigationCompose = "2.5.3"
 lifecycle = "2.6.1"
 httpLogging = "4.9.3"
+paging = "3.1.1"
+composePaging = "1.0.0-alpha18"
 
 [libraries]
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
@@ -50,6 +52,9 @@ gpsCoroutines = {module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-service
 navigationCompose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 lifecycle = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref="lifecycle"}
 httpLogging = { module = "com.squareup.okhttp3:logging-interceptor", version.ref="httpLogging"}
+pagingRuntime = { module="androidx.paging:paging-runtime", version.ref="paging"}
+paging = { module="androidx.paging:paging-compose", version.ref="composePaging"}
+#pagingCommon = { group = "androidx.paging", name = "paging-common-ktx", version.ref = "paging" }
 
 [plugins]
 com-android-application = { id = "com.android.application", version.ref = "com-android-application" }

@@ -32,7 +32,7 @@ data class ProductDetailUiState(
 @HiltViewModel
 class ProductDetailViewModel @Inject constructor(
     @IoDispatcher val dispatcher: CoroutineDispatcher,
-    private val savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
     private val foodRepository: FoodRepository
 ) : ViewModel() {
 

@@ -1,10 +1,13 @@
 package com.santansarah.barcodescanner.data.remote
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import com.santansarah.barcodescanner.data.paging.ProductSearchPagingSource
 import com.santansarah.barcodescanner.domain.ErrorCode
 import com.santansarah.barcodescanner.utils.ServiceResult
-import retrofit2.HttpException
+import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
-import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -26,16 +29,13 @@ class FoodRepository @Inject constructor(
         }
     }
 
-    suspend fun getSearchResults(searchText: String): ServiceResult<SearchResults> {
-        return try {
-            val result = api.searchProducts(
-                searchText = searchText,
-                fields = SearchProductItem.fields.joinToString(","))
-            Timber.d(result.toString())
-            ServiceResult.Success(result)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            ServiceResult.Error(ErrorCode.API_ERROR)
-        }
+    fun getSearchResults(searchText: String): Flow<PagingData<SearchProductItem>> {
+        return Pager(
+            config = PagingConfig(pageSize = 24),
+            pagingSourceFactory = {
+                ProductSearchPagingSource(foodApi = api, searchText = searchText)
+            }
+        ).flow
     }
+
 }

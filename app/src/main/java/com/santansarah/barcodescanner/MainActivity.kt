@@ -33,6 +33,7 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import timber.log.Timber
 import javax.inject.Inject
+import kotlin.math.ceil
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {

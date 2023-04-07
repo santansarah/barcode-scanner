@@ -79,6 +79,8 @@ dependencies {
     implementation(libs.gpsCoroutines)
     implementation(libs.navigationCompose)
     implementation(libs.lifecycle)
+    implementation(libs.paging)
+    implementation(libs.pagingRuntime)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
