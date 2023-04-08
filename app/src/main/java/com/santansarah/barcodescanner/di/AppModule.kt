@@ -22,8 +22,10 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import java.time.Duration
 import javax.inject.Qualifier
 import javax.inject.Singleton
+import kotlin.time.Duration.Companion.seconds
 
 
 @InstallIn(SingletonComponent::class)
@@ -50,7 +52,10 @@ object AppModules {
         val interceptor = HttpLoggingInterceptor()
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
         val client: OkHttpClient =
-            OkHttpClient.Builder().addInterceptor(interceptor).build()
+            OkHttpClient.Builder().addInterceptor(interceptor)
+                .callTimeout(Duration.ofSeconds(30))
+                .connectTimeout(Duration.ofSeconds(5))
+                .build()
 
         return Retrofit.Builder()
             .baseUrl(STAGINGAPI)

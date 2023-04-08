@@ -26,7 +26,7 @@ import timber.log.Timber
 fun HomeRoute(
     viewModel: HomeViewModel = hiltViewModel(),
     onGotBarcode: (String) -> Unit,
-    onSearchClicked: (String) -> Unit
+    onSearchClicked: (String) -> Unit,
 ) {
 
     val barcodeResults = viewModel.barcode.collectAsStateWithLifecycle().value

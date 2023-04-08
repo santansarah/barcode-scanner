@@ -42,16 +42,16 @@ fun ProductDetailsRoute(
     onBackClicked: () -> Unit
 ) {
 
+    val barcode = viewModel.barcodeFromState
     val itemListing = viewModel.itemListing.collectAsStateWithLifecycle().value
+    val isLoading = viewModel.isLoading.collectAsStateWithLifecycle().value
 
-    if (itemListing != null) {
-        ItemDetails(product = itemListing.product,
-            onBackClicked = onBackClicked,
-            code = itemListing.code
-        )
-    } else {
-        ProductLoading()
-    }
+    ItemDetails(
+        isLoading = isLoading,
+        product = itemListing?.product,
+        onBackClicked = onBackClicked,
+        code = barcode
+    )
 
 }
 
@@ -99,11 +99,16 @@ fun ProductNotFound(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text(text = "Product Not Found",
-            style = MaterialTheme.typography.titleLarge)
+        Text(
+            text = "Product Not Found",
+            style = MaterialTheme.typography.titleLarge
+        )
         Spacer(modifier = Modifier.height(20.dp))
-        Text(text = "Make sure you scan the barcode in a well lit room. If the " +
-                "barcode doesn't seem to match, try again.")
+        Text(
+            text = "Make sure you scan the barcode in a well lit room, and that the " +
+                    "barcode surface is not wrinkled. If the " +
+                    "barcode doesn't seem to match, try again."
+        )
     }
 
 }
@@ -112,55 +117,63 @@ fun ProductNotFound(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ItemDetails(
+    isLoading: Boolean,
     code: String,
     product: Product?,
     onBackClicked: () -> Unit
 ) {
 
     Scaffold(
-        topBar = { MainAppBar(onBackClicked = onBackClicked,
-            title = code) }
+        topBar = {
+            MainAppBar(
+                onBackClicked = onBackClicked,
+                title = code
+            )
+        }
     ) { padding ->
 
-        product?.let {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(padding)
-                    .verticalScroll(rememberScrollState()),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                product.brandOwner?.let {
+        if (isLoading)
+            ProductLoading()
+        else
+            product?.let {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(padding)
+                        .verticalScroll(rememberScrollState()),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    product.brandOwner?.let {
+                        Text(
+                            text = it,
+                            style = MaterialTheme.typography.headlineSmall
+                        )
+                    }
                     Text(
-                        text = it,
+                        text = product.productName,
                         style = MaterialTheme.typography.headlineSmall
                     )
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    ItemImageSlider(
+                        imgFront = product.imgFrontUrl,
+                        imgBack = product.imgNutritionUrl
+                    )
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    Ingredients(product = product)
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    NutritionData(
+                        nutriments = product.nutriments,
+                        servingSize = product.servingSize ?: "Unknown"
+                    )
+
                 }
-                Text(
-                    text = product.productName,
-                    style = MaterialTheme.typography.headlineSmall
-                )
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                ItemImageSlider(
-                    imgFront = product.imgFrontUrl,
-                    imgBack = product.imgNutritionUrl
-                )
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                Ingredients(product = product)
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                NutritionData(
-                    nutriments = product.nutriments,
-                    servingSize = product.servingSize ?: "Unknown"
-                )
-
-            }
-        } ?: ProductNotFound(paddingValues = padding)
+            } ?: ProductNotFound(paddingValues = padding)
     }
 }
 
@@ -172,19 +185,23 @@ fun PreviewItemDetails() {
     val item = Json {
         ignoreUnknownKeys = true
     }.decodeFromString<ItemListing>(cashews)
-    val placeHolderImage = item.copy(product =
-    item.product!!.copy(imgFrontUrl = null, imgNutritionUrl = null))
+    val placeHolderImage = item.copy(
+        product =
+        item.product!!.copy(imgFrontUrl = null, imgNutritionUrl = null)
+    )
 
     BarcodeScannerTheme {
-        ItemDetails(product = placeHolderImage.product,
-            onBackClicked = {}, code = item.code)
+        ItemDetails(isLoading = false,
+            product = placeHolderImage.product,
+            onBackClicked = {}, code = item.code
+        )
     }
 
 }
 
 @Preview
 @Composable
-fun PreviewNotFound(){
+fun PreviewNotFound() {
 
     val item = Json {
         ignoreUnknownKeys = true
@@ -192,8 +209,10 @@ fun PreviewNotFound(){
 
 
     BarcodeScannerTheme {
-        ItemDetails(product = item.product,
-            onBackClicked = {}, code = item.code)
+        ItemDetails(isLoading = false,
+            product = item.product,
+            onBackClicked = {}, code = item.code
+        )
     }
 
 }

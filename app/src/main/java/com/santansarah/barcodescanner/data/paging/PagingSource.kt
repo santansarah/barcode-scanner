@@ -27,7 +27,7 @@ class ProductSearchPagingSource constructor(
                /* val totalPages = ceil(results.data.count.toDouble()
                     .div(results.data.pageSize.toDouble())).toInt()*/
                 val onLastPage = results.data.page.times(results.data.pageSize) >= results.data.count
-                Timber.d("last page: $onLastPage")
+                Timber.d("Refreshing search: $currentPage, $onLastPage")
 
                 return LoadResult.Page(
                     data = results.data.products,
@@ -36,6 +36,13 @@ class ProductSearchPagingSource constructor(
                 )
             }
             is ServiceResult.Error -> {
+                return LoadResult.Page(
+                    data = emptyList(),
+                    prevKey = null,
+                    nextKey = null
+                )
+            }
+            is ServiceResult.Loading -> {
                 return LoadResult.Page(
                     data = emptyList(),
                     prevKey = null,

@@ -12,6 +12,7 @@ import com.santansarah.barcodescanner.utils.ServiceResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.filterNotNull
@@ -36,25 +37,30 @@ class ProductDetailViewModel @Inject constructor(
     private val foodRepository: FoodRepository
 ) : ViewModel() {
 
-    private val barcodeFromState = savedStateHandle.getStateFlow<String?>(BARCODE, null)
-        .filterNotNull()
-        .flowOn(dispatcher)
-        .onEach {
-            Timber.d("barcode from savedState: $it")
-            getProductDetail(it)
-        }
-        .launchIn(viewModelScope)
-
+    val barcodeFromState = savedStateHandle[BARCODE] ?: "000000000000"
     val itemListing = MutableStateFlow<ItemListing?>(null)
+    val isLoading = MutableStateFlow(true)
+
+    init {
+        getProductDetail(barcodeFromState)
+    }
 
     private fun getProductDetail(barcode: String) {
         Timber.d("getting product detail")
         viewModelScope.launch(dispatcher) {
-            when(val result = foodRepository.getInfoByBarCode(barcode)) {
-                is ServiceResult.Success -> {
-                    itemListing.value = result.data
+            foodRepository.getInfoByBarCode(barcode).collect {
+                when (it) {
+                    is ServiceResult.Loading -> {
+                        isLoading.value = true
+                    }
+                    is ServiceResult.Success -> {
+                        isLoading.value = false
+                        itemListing.value = it.data
+                    }
+                    is ServiceResult.Error -> {
+                        isLoading.value = false
+                    }
                 }
-                is ServiceResult.Error -> {}
             }
         }
     }

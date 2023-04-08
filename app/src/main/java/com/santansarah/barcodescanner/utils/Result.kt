@@ -3,15 +3,9 @@ package com.santansarah.barcodescanner.utils
 import com.santansarah.barcodescanner.domain.ErrorCode
 
 sealed class ServiceResult<out R> {
+    object Loading : ServiceResult<Nothing>()
     data class Success<out T>(val data: T) : ServiceResult<T>()
     data class Error(val error: ErrorCode) : ServiceResult<Nothing>()
-
-    override fun toString(): String {
-        return when (this) {
-            is Success<*> -> "Success[data=$data]"
-            is Error -> "Error[exception=$error]"
-        }
-    }
 }
 
 /**

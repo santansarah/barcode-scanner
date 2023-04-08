@@ -1,5 +1,12 @@
 package com.santansarah.barcodescanner.ui
 
+import androidx.compose.animation.animateColor
+import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,6 +19,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
@@ -20,9 +29,17 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Brush.Companion.linearGradient
+import androidx.compose.ui.graphics.Brush.Companion.radialGradient
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -45,15 +62,22 @@ import com.santansarah.barcodescanner.ui.theme.BarcodeScannerTheme
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
+import timber.log.Timber
 
 @Composable
 fun SearchRoute(
     viewModel: SearchViewModel = hiltViewModel(),
-    onBackClicked: () -> Unit
+    onBackClicked: () -> Unit,
+    onGotBarcode: (String) -> Unit,
 ) {
 
     val searchResults = viewModel.searchResults.collectAsLazyPagingItems()
-    ShowSearchResults(searchResults = searchResults, onBackClicked = onBackClicked)
+
+    ShowSearchResults(
+        searchResults = searchResults,
+        onBackClicked = onBackClicked,
+        onGotBarcode = onGotBarcode
+    )
 
 }
 
@@ -61,7 +85,8 @@ fun SearchRoute(
 @Composable
 fun ShowSearchResults(
     searchResults: LazyPagingItems<SearchProductItem>,
-    onBackClicked: () -> Unit
+    onBackClicked: () -> Unit,
+    onGotBarcode: (String) -> Unit
 ) {
 
     Scaffold(
@@ -73,83 +98,62 @@ fun ShowSearchResults(
         }
     ) { padding ->
 
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(padding),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-
-            items(searchResults) { productInfo ->
-
-                ProductSearchListItem(productInfo)
+        when (searchResults.loadState.refresh) { //FIRST LOAD
+            is LoadState.Error -> {
+                //TODO Error Item
+                //state.error to get error message
             }
 
-            when (val state = searchResults.loadState.refresh) { //FIRST LOAD
-                is LoadState.Error -> {
-                    //TODO Error Item
-                    //state.error to get error message
+            is LoadState.Loading -> { // Loading UI
+                Timber.d("Refreshing loadState")
+                Column(
+                    modifier = Modifier
+                        .padding(padding)
+                        .fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                ) {
+                    Text(
+                        modifier = Modifier
+                            .padding(8.dp),
+                        text = "Loading Search Results"
+                    )
+
+                    CircularProgressIndicator(color = Color.Black)
                 }
-
-                is LoadState.Loading -> { // Loading UI
-                    item {
-                        Column(
-                            modifier = Modifier
-                                .fillParentMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center,
-                        ) {
-                            Text(
-                                modifier = Modifier
-                                    .padding(8.dp),
-                                text = "Refresh Loading"
-                            )
-
-                            CircularProgressIndicator(color = Color.Black)
-                        }
-                    }
-                }
-
-                else -> {}
             }
 
-            when (val state = searchResults.loadState.append) { // Pagination
-                is LoadState.Error -> {
-                    //TODO Pagination Error Item
-                    //state.error to get error message
-                }
+            else -> {
+                LazyColumn(
+                    state = rememberLazyListState(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(padding),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
 
-                is LoadState.Loading -> { // Pagination Loading UI
-                    item {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center,
-                        ) {
-                            Text(text = "Pagination Loading")
-
-                            CircularProgressIndicator(color = Color.Black)
-                        }
+                    items(searchResults) { productInfo ->
+                        ProductSearchListItem(productInfo, onGotBarcode)
                     }
                 }
-
-                else -> {}
             }
         }
-    }
 
+    }
 }
 
 @Composable
-private fun ProductSearchListItem(productInfo: SearchProductItem?) {
+fun ProductSearchListItem(
+    productInfo: SearchProductItem?,
+    onGotBarcode: (String) -> Unit
+) {
     productInfo?.let {
         ElevatedCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(6.dp)
                 .clickable {
-                    //onClick(device.address)
+                    onGotBarcode(it.code)
                 },
             shape = RoundedCornerShape(10.dp),
         ) {
@@ -167,22 +171,27 @@ private fun ProductSearchListItem(productInfo: SearchProductItem?) {
                         modifier = Modifier
                             .fillMaxWidth(.15f)
                             .fillMaxHeight()
-                            .padding(end = 6.dp),
+                            .padding(end = 10.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
 
-                        productInfo.imageUrl?.let {
+                        it.imageUrl?.let {
                             val painter = rememberAsyncImagePainter(
                                 model = ImageRequest.Builder(LocalContext.current)
                                     .data(productInfo.imageUrl)
                                     .size(Size.ORIGINAL)
+                                    .crossfade(true)
                                     .build(),
                             )
 
                             when (painter.state) {
                                 is AsyncImagePainter.State.Loading -> {
-                                    CircularProgressIndicator()
+                                    Image(
+                                        painter = painterResource(id = R.drawable.image_placeholder),
+                                        contentDescription = productInfo.productName,
+                                        colorFilter = ColorFilter.tint(AnimateColor())
+                                    )
                                 }
 
                                 is AsyncImagePainter.State.Success -> {
@@ -201,7 +210,7 @@ private fun ProductSearchListItem(productInfo: SearchProductItem?) {
                             }
                         } ?: Image(
                             painter = painterResource(id = R.drawable.image_placeholder),
-                            contentDescription = productInfo.productName
+                            contentDescription = it.productName
                         )
                     }
                     Column(
@@ -209,13 +218,13 @@ private fun ProductSearchListItem(productInfo: SearchProductItem?) {
                         verticalArrangement = Arrangement.Center
 
                     ) {
-                        productInfo.brandOwner?.let {
+                        it.brandOwner?.let {
                             Text(
                                 text = it,
                                 style = MaterialTheme.typography.titleMedium
                             )
                         }
-                        productInfo.productName?.let {
+                        it.productName?.let {
                             Text(
                                 text = it,
                                 style = MaterialTheme.typography.titleMedium
@@ -228,6 +237,39 @@ private fun ProductSearchListItem(productInfo: SearchProductItem?) {
 
     }
 }
+
+
+@Composable
+fun shimmerBrush(): Brush {
+
+    val outsideColor = Color(0xFFEDE3E9)
+    val insideColor = Color(0xFFe0a3b1).copy(.9f)
+    val bufferColor = Color(0xFFe9cdd2)
+
+    val shimmerColors = listOf(
+        outsideColor,
+        bufferColor,
+        insideColor,
+        bufferColor,
+        outsideColor
+    )
+
+    val transition = rememberInfiniteTransition(label = "imageTransition")
+
+    val translateAnimation = transition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1300f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(800), repeatMode = RepeatMode.Reverse
+        ), label = "imageAnimation"
+    )
+    return linearGradient(
+        colors = shimmerColors,
+        start = Offset.Zero,
+        end = Offset(x = translateAnimation.value, y = translateAnimation.value)
+    )
+}
+
 
 @Preview
 @Composable
@@ -243,10 +285,57 @@ fun PreviewSearchResults() {
     BarcodeScannerTheme {
         ShowSearchResults(
             searchResults =
-            flowOf(PagingData.from(placeHolder)).collectAsLazyPagingItems()
-        ) {
-
-        }
+            flowOf(PagingData.from(placeHolder)).collectAsLazyPagingItems(), {}, {}
+        )
     }
+
+}
+
+@Composable
+fun AnimateColor(): Color {
+    val infiniteTransition = rememberInfiniteTransition(label = "")
+    val color by infiniteTransition.animateColor(
+        initialValue = Color.LightGray,
+        targetValue = Color(0xFFff84a9),
+        animationSpec = infiniteRepeatable(
+            animation = tween(300, easing = FastOutLinearInEasing),
+            repeatMode = RepeatMode.Reverse
+        ), label = ""
+    )
+
+    return color
+}
+
+@Preview
+@Composable
+fun PreviewShimmer() {
+
+    val outsideColor = Color(0xFFEDE3E9)
+    val insideColor = Color(0xFFe0a3b1).copy(.9f)
+    val bufferColor = Color(0xFFe9cdd2)
+
+    val shimmerColors = listOf(
+        bufferColor,
+        insideColor,
+        insideColor,
+        bufferColor
+    )
+
+    val test = radialGradient(
+        colors = shimmerColors,
+        radius = 20f
+    )
+
+
+
+    Image(
+        painter = painterResource(id = R.drawable.image_placeholder),
+        contentDescription = "",
+        colorFilter = ColorFilter.tint(AnimateColor())
+        /*modifier = Modifier.background(
+            shimmerBrush()
+        )
+*/
+    )
 
 }

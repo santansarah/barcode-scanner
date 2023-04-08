@@ -43,6 +43,8 @@ class SearchViewModel @Inject constructor(
     private val foodRepository: FoodRepository
 ) : ViewModel() {
 
+    var rememberListScrollState = Pair(0,0)
+
     private val searchStringFromState = savedStateHandle.getStateFlow<String?>(SEARCH_TEXT,
         null)
         .filterNotNull()
