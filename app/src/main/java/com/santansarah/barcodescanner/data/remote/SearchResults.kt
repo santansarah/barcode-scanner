@@ -5,9 +5,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class SearchResults(
-    val count: Int,
+    val count: Int? = 0,
     val page: Int,
-    @SerialName("page_count") val pageCount: Int,
+    @SerialName("page_count") val pageCount: Int? = 0,
     @SerialName("page_size") val pageSize: Int,
     val products: List<SearchProductItem>,
     val skip: Int

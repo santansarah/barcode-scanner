@@ -43,4 +43,18 @@ class FoodRepository @Inject constructor(
         ).flow
     }
 
+    suspend fun getSearchResults(searchText: String, page: Int): ServiceResult<SearchResults> {
+        return try {
+            val result = api.searchProducts(
+                searchText = searchText,
+                fields = SearchProductItem.fields.joinToString(","),
+                page = page)
+            Timber.d(result.toString())
+            ServiceResult.Success(result)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            ServiceResult.Error(ErrorCode.API_ERROR)
+        }
+    }
+
 }

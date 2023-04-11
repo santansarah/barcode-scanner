@@ -19,6 +19,7 @@ import androidx.compose.animation.slideOut
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -76,6 +77,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
@@ -87,6 +89,7 @@ import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import coil.size.Size
 import com.santansarah.barcodescanner.R
 import com.santansarah.barcodescanner.data.remote.SearchProductItem
 import com.santansarah.barcodescanner.data.remote.SearchResults
@@ -144,7 +147,7 @@ fun ShowSearchResults(
         AnimatedVisibility(
             visibleState = showLoadingScreen,
             enter = slideInHorizontally(),
-            exit = fadeOut(animationSpec = tween(1000))
+            exit = slideOutHorizontally()
         ) {
             SearchLoadingScreen(padding, searchText)
         }
@@ -314,7 +317,6 @@ fun ProductSearchListItem(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .defaultMinSize(minHeight = 100.dp)
                         .padding(8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -326,7 +328,7 @@ fun ProductSearchListItem(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
-                        AsyncImage(
+                        /*AsyncImage(
                             model = ImageRequest.Builder(LocalContext.current)
                                 .data(productInfo.imageUrl)
                                 .crossfade(true)
@@ -339,28 +341,90 @@ fun ProductSearchListItem(
                             contentScale = ContentScale.Crop,
                             contentDescription = productInfo.productName,
                             placeholder = painterResource(id = R.drawable.food_placholder)
-                        )
+                        )*/
 
-                        Column(
-                            //modifier = Modifier.fillMaxWidth(.9f),
-                            verticalArrangement = Arrangement.Center
 
-                        ) {
+                        it.imageUrl?.let { imgUrl ->
 
-                            val productText = listOfNotNull(
-                                it.brandOwner,
-                                it.productName
-                            ).joinToString(" ")
+                            /*AsyncImage(
+                                model = ImageRequest.Builder(LocalContext.current)
+                                    .data(productInfo.imageUrl)
+                                    .crossfade(true)
+                                    .build(),
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(20.dp))
+                                    .height(140.dp)
+                                    .width(100.dp),
+                                contentScale = ContentScale.Crop,
+                                contentDescription = productInfo.productName,
+                            )*/
 
-                            Text(
-                                text = productText,
-                                style = MaterialTheme.typography.titleLarge,
-                                overflow = TextOverflow.Ellipsis
+                            val showLoadingAnimation by
+                            remember { mutableStateOf(MutableTransitionState(true)) }
+
+                            val painter = rememberAsyncImagePainter(
+                                model = ImageRequest.Builder(LocalContext.current)
+                                    .data(imgUrl)
+                                    .size(Size.ORIGINAL)
+                                    .build(),
+                                contentScale = ContentScale.Crop,
+                                onState = {
+                                    Timber.d("Painter: $it")
+                                    when (it) {
+                                        is AsyncImagePainter.State.Loading, is AsyncImagePainter.State.Empty -> { /*default state*/
+                                        }
+
+                                        is AsyncImagePainter.State.Error, is AsyncImagePainter.State.Success -> {
+                                            showLoadingAnimation.targetState = false
+                                        }
+                                    }
+                                }
                             )
 
-                        }
+                            AnimatedVisibility(
+                                visibleState = showLoadingAnimation,
+                                enter = fadeIn(initialAlpha = 0.4f),
+                                exit = fadeOut(tween(durationMillis = 250))
+
+                            ) {
+                                AnimatedFoodIcon()
+                            }
+
+                            Image(
+                                modifier = Modifier
+                                    //.clip(RoundedCornerShape(20.dp))
+                                    .height(140.dp)
+                                    .width(100.dp)
+                                    .border(2.dp, Color(0xFFcacfc9))
+                                    .background(Color.Blue),
+                                painter = painter,
+                                contentDescription = productInfo.productName,
+                            )
+
+                        } ?: placeHolderImage()
+
+                    }
+
+                    Column(
+                        verticalArrangement = Arrangement.Center
+
+                    ) {
+
+                        val productText = listOfNotNull(
+                            it.brandOwner,
+                            it.productName
+                        ).joinToString(" ")
+
+                        Text(
+                            text = productText,
+                            style = MaterialTheme.typography.titleLarge,
+                            overflow = TextOverflow.Ellipsis,
+                            color = Color.Black
+                        )
+
                     }
                 }
+
             }
         }
     }
@@ -631,10 +695,11 @@ fun PreviewResultItems() {
                             Image(
                                 contentScale = ContentScale.Crop,
                                 modifier = Modifier
-                                    .clip(RoundedCornerShape(20.dp))
+                                    //.clip(RoundedCornerShape(20.dp))
                                     .height(140.dp)
-                                    .width(100.dp),
-                                //.border(1.dp, Color(0xFFf9004b), RoundedCornerShape(20.dp)),
+                                    .width(100.dp)
+                                .border(1.dp, Color(0xFFf9004b))
+                                    .background(Color.DarkGray),
                                 painter = previewImage,
                                 contentDescription = ""
                             )

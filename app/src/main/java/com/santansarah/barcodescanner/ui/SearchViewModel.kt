@@ -12,6 +12,7 @@ import com.santansarah.barcodescanner.data.paging.ProductSearchPagingSource
 import com.santansarah.barcodescanner.data.remote.FoodRepository
 import com.santansarah.barcodescanner.data.remote.ItemListing
 import com.santansarah.barcodescanner.data.remote.SearchProductItem
+import com.santansarah.barcodescanner.data.remote.SearchResults
 import com.santansarah.barcodescanner.di.IoDispatcher
 import com.santansarah.barcodescanner.domain.models.AppRouteArgs.BARCODE
 import com.santansarah.barcodescanner.domain.models.AppRouteArgs.SEARCH_TEXT
@@ -43,7 +44,7 @@ class SearchViewModel @Inject constructor(
     private val foodRepository: FoodRepository
 ) : ViewModel() {
 
-    var rememberListScrollState = Pair(0,0)
+    var rememberListScrollState = Pair(0, 0)
 
     val searchStringFromState = savedStateHandle[SEARCH_TEXT] ?: ""
     val searchResults = MutableStateFlow<PagingData<SearchProductItem>>(PagingData.empty())
