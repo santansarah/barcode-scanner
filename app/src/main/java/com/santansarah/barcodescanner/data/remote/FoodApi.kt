@@ -20,7 +20,7 @@ interface FoodApi {
 
     //https://world.openfoodfacts.org/cgi/search.pl?search_terms=great+value+chips&search_simple=1
     // &action=process&json=true&fields=brand_owner,product_name,image_front_small_url
-    @GET("https://us.openfoodfacts.net/cgi/search.pl?json=true")
+    @GET("https://us.openfoodfacts.org/cgi/search.pl?json=true")
     suspend fun searchProducts(
         @Header("Authorization") authorization: String = basic,
         @Query("search_terms") searchText: String,

@@ -23,6 +23,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import java.time.Duration
+import java.util.concurrent.TimeUnit
 import javax.inject.Qualifier
 import javax.inject.Singleton
 import kotlin.time.Duration.Companion.seconds
@@ -53,8 +54,9 @@ object AppModules {
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
         val client: OkHttpClient =
             OkHttpClient.Builder().addInterceptor(interceptor)
-                .callTimeout(Duration.ofSeconds(30))
-                .connectTimeout(Duration.ofSeconds(5))
+                .connectTimeout(90, TimeUnit.SECONDS)
+                .writeTimeout(120, TimeUnit.SECONDS)
+                .readTimeout(120, TimeUnit.SECONDS)
                 .build()
 
         return Retrofit.Builder()

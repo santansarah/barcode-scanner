@@ -45,17 +45,12 @@ class SearchViewModel @Inject constructor(
 
     var rememberListScrollState = Pair(0,0)
 
-    private val searchStringFromState = savedStateHandle.getStateFlow<String?>(SEARCH_TEXT,
-        null)
-        .filterNotNull()
-        .flowOn(dispatcher)
-        .onEach {
-            Timber.d("search from savedState: $it")
-            getProducts(it)
-        }
-        .launchIn(viewModelScope)
-
+    val searchStringFromState = savedStateHandle[SEARCH_TEXT] ?: ""
     val searchResults = MutableStateFlow<PagingData<SearchProductItem>>(PagingData.empty())
+
+    init {
+        getProducts(searchStringFromState)
+    }
 
     private fun getProducts(searchText: String) {
         viewModelScope.launch {

@@ -63,7 +63,7 @@ fun MainAppBar(
 ) {
     CenterAlignedTopAppBar(
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = Color(0xfff9004b)
+            containerColor = Color(0xFFfe0033)
         ),
         title = { Text(text = title) },
         navigationIcon = {
