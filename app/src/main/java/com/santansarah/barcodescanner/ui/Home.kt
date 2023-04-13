@@ -11,6 +11,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -173,6 +174,7 @@ fun HomeScreen(
                     }
 
                     OutlinedTextField(
+                        shape = RectangleShape,
                         modifier = Modifier
                             .fillMaxWidth(),
                         //.padding(vertical = 4.dp),
@@ -260,7 +262,7 @@ fun HomeScreen(
                         TextButton(
                             modifier = Modifier
                                 .width(130.dp)
-                                .background(Color(0xFF282928)),
+                                .background(Color(0xFF282829)),
                             colors = ButtonDefaults.outlinedButtonColors(
                                 //containerColor = Color(0xFF076C94),
                                 contentColor = Color.Black
