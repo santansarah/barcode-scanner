@@ -1,7 +1,10 @@
 package com.santansarah.barcodescanner.ui
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.LinearEasing
@@ -18,6 +21,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOut
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.with
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -50,6 +54,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -119,7 +125,7 @@ fun SearchRoute(
 
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
 fun ShowSearchResults(
     searchResults: LazyPagingItems<SearchProductItem>,
@@ -137,37 +143,48 @@ fun ShowSearchResults(
         }
     ) { padding ->
 
-        val showLoadingScreen by
-        remember { mutableStateOf(MutableTransitionState(true)) }
+        var showLoadingScreen by
+        rememberSaveable { mutableStateOf(true) }
 
         if (searchResults.loadState.refresh is LoadState.NotLoading) {
-            showLoadingScreen.targetState = false
+            showLoadingScreen = false
         }
 
-        AnimatedVisibility(
-            visibleState = showLoadingScreen,
-            enter = slideInHorizontally(),
-            exit = slideOutHorizontally()
-        ) {
-            SearchLoadingScreen(padding, searchText)
-        }
-
-        LazyColumn(
-            state = rememberLazyListState(),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(padding),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-
-            items(searchResults) { productInfo ->
-                ProductSearchListItem(productInfo, onGotBarcode) {
-                    PlaceholderImage(
-                        description = productInfo?.productName ?: "Product Image"
-                    )
-                }
+        AnimatedContent(
+            targetState = showLoadingScreen, label = "",
+            transitionSpec = {
+                if (targetState) {
+                    slideInHorizontally { width -> width } + fadeIn() with
+                            slideOutHorizontally { width -> -width } + fadeOut()
+                } else {
+                    slideInHorizontally { width -> width } + fadeIn() with
+                            slideOutHorizontally { width -> -width } + fadeOut()
+                }.using(
+                    SizeTransform(clip = false)
+                )
             }
+        ) {
+            if (it)
+                SearchLoadingScreen(padding, searchText)
+            else
+                LazyColumn(
+                    state = rememberLazyListState(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(padding),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+
+                    items(searchResults) { productInfo ->
+                        ProductSearchListItem(productInfo, onGotBarcode) {
+                            PlaceholderImage(
+                                description = productInfo?.productName ?: "Product Image"
+                            )
+                        }
+                    }
+                }
         }
+
 
     }
 }
@@ -322,86 +339,26 @@ fun ProductSearchListItem(
                 ) {
                     Column(
                         modifier = Modifier
-                            //.fillMaxWidth(.15f)
-                            //.fillMaxHeight()
                             .padding(end = 16.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
-                        /*AsyncImage(
+
+                        AsyncImage(
                             model = ImageRequest.Builder(LocalContext.current)
                                 .data(productInfo.imageUrl)
                                 .crossfade(true)
                                 .build(),
+                            placeholder = painterResource(id = R.drawable.food_placholder),
+                            error = painterResource(id = R.drawable.food_placholder),
+                            fallback = painterResource(id = R.drawable.food_placholder),
+                            contentScale = ContentScale.Crop,
                             modifier = Modifier
-                                //.clip(RoundedCornerShape(20.dp))
                                 .height(140.dp)
                                 .width(100.dp)
                                 .border(2.dp, Color(0xFFcacfc9)),
-                            contentScale = ContentScale.Crop,
-                            contentDescription = productInfo.productName,
-                            placeholder = painterResource(id = R.drawable.food_placholder)
-                        )*/
-
-
-                        it.imageUrl?.let { imgUrl ->
-
-                            /*AsyncImage(
-                                model = ImageRequest.Builder(LocalContext.current)
-                                    .data(productInfo.imageUrl)
-                                    .crossfade(true)
-                                    .build(),
-                                modifier = Modifier
-                                    .clip(RoundedCornerShape(20.dp))
-                                    .height(140.dp)
-                                    .width(100.dp),
-                                contentScale = ContentScale.Crop,
-                                contentDescription = productInfo.productName,
-                            )*/
-
-                            val showLoadingAnimation by
-                            remember { mutableStateOf(MutableTransitionState(true)) }
-
-                            val painter = rememberAsyncImagePainter(
-                                model = ImageRequest.Builder(LocalContext.current)
-                                    .data(imgUrl)
-                                    .size(Size.ORIGINAL)
-                                    .build(),
-                                contentScale = ContentScale.Crop,
-                                onState = {
-                                    Timber.d("Painter: $it")
-                                    when (it) {
-                                        is AsyncImagePainter.State.Loading, is AsyncImagePainter.State.Empty -> { /*default state*/
-                                        }
-
-                                        is AsyncImagePainter.State.Error, is AsyncImagePainter.State.Success -> {
-                                            showLoadingAnimation.targetState = false
-                                        }
-                                    }
-                                }
-                            )
-
-                            AnimatedVisibility(
-                                visibleState = showLoadingAnimation,
-                                enter = fadeIn(initialAlpha = 0.4f),
-                                exit = fadeOut(tween(durationMillis = 250))
-
-                            ) {
-                                AnimatedFoodIcon()
-                            }
-
-                            Image(
-                                modifier = Modifier
-                                    //.clip(RoundedCornerShape(20.dp))
-                                    .height(140.dp)
-                                    .width(100.dp)
-                                    .border(2.dp, Color(0xFFcacfc9))
-                                    .background(Color.Blue),
-                                painter = painter,
-                                contentDescription = productInfo.productName,
-                            )
-
-                        } ?: placeHolderImage()
+                            contentDescription = productInfo.productName
+                        )
 
                     }
 
@@ -447,35 +404,6 @@ fun PlaceholderImage(
     )
 }
 
-
-@Composable
-fun shimmerBrush(): Brush {
-
-    val outsideColor = Color(0xFFdfe2de)
-    val insideColor = Color(0xFFcacfc9).copy(.9f)
-    val bufferColor = Color(0xFFdfe2de)
-
-    val shimmerColors = listOf(
-        outsideColor,
-        insideColor,
-        outsideColor
-    )
-
-    val transition = rememberInfiniteTransition(label = "imageTransition")
-
-    val translateAnimation = transition.animateFloat(
-        initialValue = 0f,
-        targetValue = 1300f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(800), repeatMode = RepeatMode.Reverse
-        ), label = "imageAnimation"
-    )
-    return linearGradient(
-        colors = shimmerColors,
-        start = Offset.Zero,
-        end = Offset(x = translateAnimation.value, y = translateAnimation.value)
-    )
-}
 
 @Preview
 @Composable
@@ -698,7 +626,7 @@ fun PreviewResultItems() {
                                     //.clip(RoundedCornerShape(20.dp))
                                     .height(140.dp)
                                     .width(100.dp)
-                                .border(1.dp, Color(0xFFf9004b))
+                                    .border(1.dp, Color(0xFFf9004b))
                                     .background(Color.DarkGray),
                                 painter = previewImage,
                                 contentDescription = ""

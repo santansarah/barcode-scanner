@@ -2,8 +2,16 @@ package com.santansarah.barcodescanner.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val darkBackground = Color(0xFF90ff41)
+val primary = Color(0xFF076C94)
+val darkBackground =  Color(0xFF7cff1f)  //Color(0xFF90ff41)
 val cardBackground = Color(0xFFeef7e8)
+val lightShader = Color(0xFFdfe2de)
+
+val brightYellow = Color(0xFFF7FF00)
+
+val lightestGray = Color(0xFFdfe2de)
+val lightGray = Color(0xFFcacfc9)
+val gray = Color(0xFFabb0aa)
 
 val Purple80 = Color(0xFFD0BCFF)
 val PurpleGrey80 = Color(0xFFCCC2DC)

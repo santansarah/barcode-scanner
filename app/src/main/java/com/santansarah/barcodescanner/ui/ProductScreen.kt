@@ -12,6 +12,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -61,17 +62,21 @@ fun MainAppBar(
     title: String,
     onBackClicked: () -> Unit
 ) {
-    CenterAlignedTopAppBar(
-        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = Color(0xFFfe0033)
-        ),
-        title = { Text(text = title) },
-        navigationIcon = {
-            IconButton(onClick = onBackClicked) {
-                BackIcon(contentDesc = "Go Back")
+    Column {
+        CenterAlignedTopAppBar(
+            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                containerColor = Color(0xFFe0002d),
+                titleContentColor = Color.White
+            ),
+            title = { Text(text = title) },
+            navigationIcon = {
+                IconButton(onClick = onBackClicked) {
+                    BackIcon(contentDesc = "Go Back")
+                }
             }
-        }
-    )
+        )
+        Divider(thickness = 2.dp, color = Color.DarkGray)
+    }
 }
 
 @Composable
