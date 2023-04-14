@@ -46,7 +46,7 @@ fun ItemImageSlider(
             shape = RoundedCornerShape(12.dp),
             elevation = CardDefaults.cardElevation(6.dp),
             modifier = Modifier
-                .size(260.dp)
+                .size(220.dp)
                 .clickable(
                     onClick = { }
                 )
@@ -67,7 +67,7 @@ fun ItemImageSlider(
                         error = { LargeImagePlaceholder() },
                         contentDescription = "Product",
                         alignment = Alignment.BottomEnd,
-                        contentScale = ContentScale.Fit
+                        contentScale = ContentScale.Inside
                     )
                 } ?: LargeImagePlaceholder()
             }

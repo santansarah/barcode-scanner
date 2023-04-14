@@ -252,7 +252,7 @@ fun PreviewItemDetails() {
 
     BarcodeScannerTheme {
         ItemDetails(
-            isLoading = true,
+            isLoading = false,
             product = placeHolderImage.product,
             onBackClicked = {}, code = item.code
         )
