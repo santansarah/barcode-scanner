@@ -8,7 +8,7 @@ import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFact
 import com.santansarah.barcodescanner.BarcodeScanner
 import com.santansarah.barcodescanner.data.remote.FoodApi
 import com.santansarah.barcodescanner.data.remote.FoodRepository
-import com.santansarah.barcodescanner.domain.STAGINGAPI
+import com.santansarah.barcodescanner.domain.OFFAPI
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,11 +22,9 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import java.time.Duration
 import java.util.concurrent.TimeUnit
 import javax.inject.Qualifier
 import javax.inject.Singleton
-import kotlin.time.Duration.Companion.seconds
 
 
 @InstallIn(SingletonComponent::class)
@@ -60,7 +58,7 @@ object AppModules {
                 .build()
 
         return Retrofit.Builder()
-            .baseUrl(STAGINGAPI)
+            .baseUrl(OFFAPI)
             .addConverterFactory(jsonBuilder
                 .asConverterFactory(contentType!!))
             .client(client)

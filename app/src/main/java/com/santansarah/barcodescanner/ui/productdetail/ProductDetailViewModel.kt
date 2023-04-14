@@ -1,4 +1,4 @@
-package com.santansarah.barcodescanner.ui
+package com.santansarah.barcodescanner.ui.productdetail
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel

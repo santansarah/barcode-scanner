@@ -1,3 +1,3 @@
 package com.santansarah.barcodescanner.domain
 
-const val STAGINGAPI = "https://world.openfoodfacts.net/api/v2/"
+const val OFFAPI = "https://us.openfoodfacts.org/api/v2/"

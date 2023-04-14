@@ -9,6 +9,7 @@ import com.santansarah.barcodescanner.domain.models.AppDestinations.PRODUCT_DETA
 import com.santansarah.barcodescanner.domain.models.AppDestinations.SEARCH
 import com.santansarah.barcodescanner.domain.models.AppRoutes.PRODUCT_DETAIL_SCREEN
 import com.santansarah.barcodescanner.domain.models.AppRoutes.SEARCH_SCREEN
+import com.santansarah.barcodescanner.ui.productdetail.ProductDetailsRoute
 
 @Composable
 fun AppNavGraph(

@@ -66,6 +66,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.santansarah.barcodescanner.R
+import com.santansarah.barcodescanner.ui.components.MainAppBar
 import com.santansarah.barcodescanner.ui.theme.BarcodeScannerTheme
 import com.santansarah.barcodescanner.ui.theme.brightYellow
 import com.santansarah.barcodescanner.ui.theme.cardBackground
@@ -116,12 +117,12 @@ fun HomeScreen(
         Column(
             modifier = Modifier
                 .padding(padding)
-                .padding(top = 20.dp)
+                //.padding(top = 20.dp)
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
 
-            Divider(thickness = 2.dp, color = Color.DarkGray)
+            //Divider(thickness = 2.dp, color = Color.DarkGray)
             ElevatedCard(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -272,7 +273,7 @@ fun HomeScreen(
                                 text = "Scan Product",
                                 textAlign = TextAlign.Center,
                                 color = lightestGray,
-                                style = TextStyle(fontWeight = FontWeight.Bold)
+                                //style = TextStyle(fontWeight = FontWeight.Bold)
                             )
                         }
                     }
