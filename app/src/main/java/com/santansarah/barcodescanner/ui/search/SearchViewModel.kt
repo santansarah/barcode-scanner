@@ -1,4 +1,4 @@
-package com.santansarah.barcodescanner.ui
+package com.santansarah.barcodescanner.ui.search
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -48,9 +48,19 @@ class SearchViewModel @Inject constructor(
 
     val searchStringFromState = savedStateHandle[SEARCH_TEXT] ?: ""
     val searchResults = MutableStateFlow<PagingData<SearchProductItem>>(PagingData.empty())
+    val searchText = MutableStateFlow(searchStringFromState)
+    val searchError = MutableStateFlow(false)
 
     init {
         getProducts(searchStringFromState)
+    }
+
+    fun onSearchValueChanged(newText: String) {
+        searchText.value = newText
+    }
+
+    fun onSearch() {
+        getProducts(searchText.value)
     }
 
     private fun getProducts(searchText: String) {
@@ -60,5 +70,23 @@ class SearchViewModel @Inject constructor(
             }
         }
     }
+
+    /*private fun getProducts(searchText: String) {
+        viewModelScope.launch {
+            when (val result = foodRepository.getSearchResults(searchText)) {
+                is ServiceResult.Success -> {
+                    result.data.cachedIn(viewModelScope).collect {
+                        searchResults.value = it
+                    }
+                }
+                is ServiceResult.Error -> {
+                    searchResults.value = PagingData.empty()
+                    searchError.value = true
+                }
+                else -> {}
+            }
+
+        }
+    }*/
 
 }

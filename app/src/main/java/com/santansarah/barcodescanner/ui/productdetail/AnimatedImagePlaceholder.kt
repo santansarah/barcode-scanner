@@ -65,10 +65,7 @@ fun AnimatedFoodIcon() {
                     restoreToCount(checkPoint)
 
                 }
-            }
-            .width(100.dp)
-            .height(140.dp)
-            .border(2.dp, Color(0xFFdfe2de)),
+            },
         contentDescription = null
     )
 }

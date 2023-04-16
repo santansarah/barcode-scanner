@@ -1,5 +1,6 @@
 package com.santansarah.barcodescanner.data.remote
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -24,7 +25,8 @@ class FoodRepository @Inject constructor(
             try {
                 val result = api.getInfoByBarCode(
                     barCode = barCode,
-                    fields = Product.fields.joinToString(","))
+                    fields = Product.fields.joinToString(",")
+                )
                 Timber.d(result.toString())
                 emit(ServiceResult.Success(result))
             } catch (e: Exception) {
@@ -43,12 +45,27 @@ class FoodRepository @Inject constructor(
         ).flow
     }
 
+    /*fun getSearchResults(searchText: String): ServiceResult<Flow<PagingData<SearchProductItem>>> {
+        return try {
+            ServiceResult.Success(Pager(
+                config = PagingConfig(pageSize = 24),
+                pagingSourceFactory = {
+                    ProductSearchPagingSource(foodApi = api, searchText = searchText)
+                }
+            ).flow)
+        } catch (e: Exception) {
+            Timber.d("api error from repo: ${e.message}")
+            ServiceResult.Error(ErrorCode.valueOf(e.message!!))
+        }
+    }*/
+
     suspend fun getSearchResults(searchText: String, page: Int): ServiceResult<SearchResults> {
         return try {
             val result = api.searchProducts(
                 searchText = searchText,
                 fields = SearchProductItem.fields.joinToString(","),
-                page = page)
+                page = page
+            )
             Timber.d(result.toString())
             ServiceResult.Success(result)
         } catch (e: Exception) {

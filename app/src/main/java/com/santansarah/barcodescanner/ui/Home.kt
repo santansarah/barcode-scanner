@@ -23,6 +23,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
@@ -59,6 +61,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -67,12 +71,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.santansarah.barcodescanner.R
 import com.santansarah.barcodescanner.ui.components.MainAppBar
+import com.santansarah.barcodescanner.ui.components.SearchTextField
 import com.santansarah.barcodescanner.ui.theme.BarcodeScannerTheme
 import com.santansarah.barcodescanner.ui.theme.brightYellow
 import com.santansarah.barcodescanner.ui.theme.cardBackground
 import com.santansarah.barcodescanner.ui.theme.gray
 import com.santansarah.barcodescanner.ui.theme.lightGray
 import com.santansarah.barcodescanner.ui.theme.lightestGray
+import com.santansarah.barcodescanner.ui.theme.redishMagenta
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -130,7 +136,8 @@ fun HomeScreen(
             ) {
 
                 Column(
-                    modifier = Modifier.background(brightYellow)
+                    modifier = Modifier
+                        .background(brightYellow)
                         .fillMaxWidth()
                 ) {
                     Text(
@@ -165,34 +172,16 @@ fun HomeScreen(
                     )
                 }
 
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-
-                    var searchText by rememberSaveable {
-                        mutableStateOf("")
-                    }
-
-                    OutlinedTextField(
-                        shape = RectangleShape,
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        //.padding(vertical = 4.dp),
-                        value = searchText,
-                        onValueChange = { searchText = it },
-                        trailingIcon = {
-                            IconButton(onClick = { onSearch(searchText) }) {
-                                Icon(
-                                    Icons.Default.Search,
-                                    "Search for products"
-                                )
-                            }
-                        }
-                    )
-                    //Spacer(Modifier.height(10.dp))
-
+                var searchText by rememberSaveable {
+                    mutableStateOf("")
                 }
+
+                SearchTextField(
+                    searchText = searchText,
+                    onValueChanged = { searchText = it },
+                    onSearchWithText = onSearch,
+                    onSearch = null
+                )
             }
             Divider(thickness = 2.dp, color = Color.DarkGray)
 
@@ -206,7 +195,8 @@ fun HomeScreen(
             ) {
 
                 Column(
-                    modifier = Modifier.background(brightYellow)
+                    modifier = Modifier
+                        .background(brightYellow)
                         .fillMaxWidth()
                 ) {
                     Text(
@@ -250,7 +240,7 @@ fun HomeScreen(
                         painter = painterResource(id = R.drawable.barcode),
                         "Barcode",
                         modifier = Modifier.padding(bottom = 20.dp),
-                        colorFilter = ColorFilter.tint(Color.DarkGray)
+                        colorFilter = ColorFilter.tint(Color.DarkGray.copy(.7f))
                     )
 
                     Column(
@@ -263,7 +253,7 @@ fun HomeScreen(
                         TextButton(
                             modifier = Modifier
                                 .width(130.dp)
-                                .background(Color(0xFF282829)),
+                                .background(Color.DarkGray),
                             colors = ButtonDefaults.outlinedButtonColors(
                                 //containerColor = Color(0xFF076C94),
                                 contentColor = Color.Black
