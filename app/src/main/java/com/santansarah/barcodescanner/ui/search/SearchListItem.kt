@@ -1,6 +1,5 @@
 package com.santansarah.barcodescanner.ui.search
 
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -40,7 +39,6 @@ fun ProductSearchListItem(
     placeHolderImage: @Composable () -> Unit
 ) {
     productInfo?.let {
-        Divider(thickness = 2.dp, color = Color.DarkGray)
         ElevatedCard(
             modifier = Modifier
                 .fillMaxWidth()
@@ -92,7 +90,7 @@ fun ProductSearchListItem(
                     ) {
 
                         val productText = listOfNotNull(
-                            it.brandOwner,
+                            it.brands,
                             it.productName
                         ).joinToString(" ")
 

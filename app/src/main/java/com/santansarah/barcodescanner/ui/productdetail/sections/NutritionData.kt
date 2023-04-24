@@ -31,6 +31,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.santansarah.barcodescanner.data.remote.Nutriments
 import com.santansarah.barcodescanner.data.remote.Product
+import com.santansarah.barcodescanner.data.remote.formatToGrams
+import com.santansarah.barcodescanner.data.remote.formatToMgs
 import com.santansarah.barcodescanner.ui.components.TableCell
 import com.santansarah.barcodescanner.ui.productdetail.loadingBrush
 import com.santansarah.barcodescanner.ui.theme.brightYellow
@@ -108,6 +110,7 @@ fun NutritionData(
     nutriments: Nutriments?,
     servingSize: String
 ) {
+
     // Each cell of a column must have the same weight.
     val column1Weight = .6f
     val column2Weight = .4f
@@ -123,7 +126,7 @@ fun NutritionData(
         Row(Modifier.fillMaxWidth()) {
             TableCell("Calories", weight = column1Weight, normalPadding, TextAlign.Start)
             TableCell(
-                text = nutriments?.calories.valueOrZero(),
+                text = nutriments?.calories.formatToGrams(),
                 weight = column2Weight, normalPadding, TextAlign.End
             )
         }
@@ -132,77 +135,77 @@ fun NutritionData(
             column1Weight = column1Weight,
             normalPadding = normalPadding,
             heading = "Cholesterol",
-            value = nutriments?.cholesterol.toMgs() + "mg",
+            value = nutriments?.cholesterol.formatToMgs() + "mg",
             column2Weight = column2Weight,
         )
         TableRow(
             column1Weight = column1Weight,
             normalPadding = normalPadding,
             heading = "Fat",
-            value = nutriments?.fat.valueOrZero() + "g",
+            value = nutriments?.fat.formatToGrams() + "g",
             column2Weight = column2Weight,
         )
         TableRow(
             column1Weight = column1Weight,
             normalPadding = indentedPadding,
             heading = "Saturated",
-            value = nutriments?.saturatedFat.valueOrZero() + "g",
+            value = nutriments?.saturatedFat.formatToGrams() + "g",
             column2Weight = column2Weight,
         )
         TableRow(
             column1Weight = column1Weight,
             normalPadding = indentedPadding,
             heading = "Monounsaturated",
-            value = nutriments?.monounsaturatedFat.valueOrZero() + "g",
+            value = nutriments?.monounsaturatedFat.formatToGrams() + "g",
             column2Weight = column2Weight,
         )
         TableRow(
             column1Weight = column1Weight,
             normalPadding = indentedPadding,
             heading = "Polyunsaturated",
-            value = nutriments?.polyunsaturatedFat.valueOrZero() + "g",
+            value = nutriments?.polyunsaturatedFat.formatToGrams() + "g",
             column2Weight = column2Weight,
         )
         TableRow(
             column1Weight = column1Weight,
             normalPadding = normalPadding,
             heading = "Sodium",
-            value = nutriments?.sodium.toMgs() + "mg",
+            value = nutriments?.sodium.formatToMgs() + "mg",
             column2Weight = column2Weight,
         )
         TableRow(
             column1Weight = column1Weight,
             normalPadding = normalPadding,
             heading = "Potassium",
-            value = nutriments?.potassium.toMgs() + "mg",
+            value = nutriments?.potassium.formatToMgs() + "mg",
             column2Weight = column2Weight,
         )
         TableRow(
             column1Weight = column1Weight,
             normalPadding = normalPadding,
             heading = "Carbohydrates",
-            value = nutriments?.carbohydrates.valueOrZero() + "g",
+            value = nutriments?.carbohydrates.toString() + "g",
             column2Weight = column2Weight,
         )
         TableRow(
             column1Weight = column1Weight,
             normalPadding = indentedPadding,
             heading = "Fiber",
-            value = "${nutriments?.fiber.valueOrZero()}g",
+            value = "${nutriments?.fiber.formatToGrams()}g",
             column2Weight = column2Weight,
         )
         TableRow(
             column1Weight = column1Weight,
             normalPadding = indentedPadding,
             heading = "Sugars",
-            value = nutriments?.sugar.valueOrZero() + "g",
+            value = nutriments?.sugar.formatToGrams() + "g",
             column2Weight = column2Weight,
         )
         TableRow(
             column1Weight = column1Weight,
             normalPadding = normalPadding,
             heading = "Protein",
-            value = nutriments?.protein.valueOrZero() + "g",
+            value = nutriments?.protein.formatToGrams() + "g",
             column2Weight = column2Weight,
         )
     }

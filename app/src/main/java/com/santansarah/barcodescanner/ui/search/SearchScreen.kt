@@ -48,6 +48,7 @@ import com.santansarah.barcodescanner.ui.theme.BarcodeScannerTheme
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
+import timber.log.Timber
 
 @Composable
 fun SearchRoute(
@@ -93,13 +94,13 @@ fun ShowSearchResults(
         }
     ) { padding ->
 
-        val showLoadingScreen by
-        rememberSaveable {
-            mutableStateOf(
-                (searchResults.loadState.refresh is LoadState.Loading
-                        || searchResults.loadState.refresh is LoadState.Error)
-            )
-        }
+        var showLoadingScreen by
+        rememberSaveable { mutableStateOf(true) }
+
+        if (searchResults.loadState.refresh is LoadState.NotLoading)
+            showLoadingScreen = false
+
+        Timber.d("showLoadingScreen: $showLoadingScreen ; load state: " + searchResults.loadState.toString())
 
         AnimatedContent(
             targetState = showLoadingScreen, label = "",

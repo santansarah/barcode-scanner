@@ -5,10 +5,10 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Product(
-    @SerialName("brand_owner") val brandOwner: String? = null,
+    @SerialName("brands") val brands: String? = null,
     @SerialName("ingredients_text_en") val ingredients: String? = null,
     val nutriments: Nutriments,
-    @SerialName("product_name") val productName: String,
+    @SerialName("product_name") val productName: String? = null,
     @SerialName("serving_size") val servingSize: String? = null,
     //@SerialName("image_front_small_url") val imgFrontSmall: String? = null,
     //@SerialName("image_front_thumb_url") val imgFrontThumb: String? = null,
@@ -22,7 +22,7 @@ data class Product(
 ) {
     companion object {
         val fields = listOf(
-            "brand_owner",
+            "brands",
             "ingredients_text_en",
             "nutriments", "product_name", "serving_size",
             "image_front_url", "image_nutrition_url"

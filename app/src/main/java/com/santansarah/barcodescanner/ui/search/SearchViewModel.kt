@@ -46,7 +46,7 @@ class SearchViewModel @Inject constructor(
 
     var rememberListScrollState = Pair(0, 0)
 
-    val searchStringFromState = savedStateHandle[SEARCH_TEXT] ?: ""
+    private val searchStringFromState = savedStateHandle[SEARCH_TEXT] ?: ""
     val searchResults = MutableStateFlow<PagingData<SearchProductItem>>(PagingData.empty())
     val searchText = MutableStateFlow(searchStringFromState)
     val searchError = MutableStateFlow(false)

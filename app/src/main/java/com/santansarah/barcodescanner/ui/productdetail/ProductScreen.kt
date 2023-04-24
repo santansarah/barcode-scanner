@@ -1,5 +1,6 @@
 package com.santansarah.barcodescanner.ui.productdetail
 
+import android.util.Log
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloat
@@ -31,6 +32,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.santansarah.barcodescanner.data.remote.ItemListing
 import com.santansarah.barcodescanner.data.remote.Product
 import com.santansarah.barcodescanner.data.remote.mock.cliffBar
+import com.santansarah.barcodescanner.data.remote.mock.cocMilkReal
+import com.santansarah.barcodescanner.data.remote.mock.coconutMilk
 import com.santansarah.barcodescanner.data.remote.mock.notfound
 import com.santansarah.barcodescanner.ui.components.MainAppBar
 import com.santansarah.barcodescanner.ui.productdetail.sections.NutritionData
@@ -135,7 +138,10 @@ fun PreviewItemDetails() {
 
     val item = Json {
         ignoreUnknownKeys = true
-    }.decodeFromString<ItemListing>(cliffBar)
+        isLenient = true
+        encodeDefaults = true
+        explicitNulls = false
+    }.decodeFromString<ItemListing>(cocMilkReal)
     val placeHolderImage = item.copy(
         product =
         item.product!!.copy(imgFrontUrl = null, imgNutritionUrl = null)

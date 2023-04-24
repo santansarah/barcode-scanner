@@ -30,6 +30,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.santansarah.barcodescanner.ui.theme.gray
+import com.santansarah.barcodescanner.ui.theme.grayButton
 import com.santansarah.barcodescanner.ui.theme.lightestGray
 import com.santansarah.barcodescanner.ui.theme.redishMagenta
 
@@ -84,7 +85,7 @@ fun SearchTextField(
                         Icon(
                             imageVector = Icons.Default.Search,
                             contentDescription = "Search for products",
-                            tint = Color.DarkGray
+                            tint = grayButton
                         )
                     }
                 }

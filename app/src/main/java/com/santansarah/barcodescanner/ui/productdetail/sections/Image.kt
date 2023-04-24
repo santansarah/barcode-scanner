@@ -67,7 +67,7 @@ fun ProductImage(
                 } else {
 
                     val productText = listOfNotNull(
-                        product?.brandOwner,
+                        product?.brands,
                         product?.productName
                     ).joinToString(" ")
 

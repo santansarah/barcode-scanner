@@ -27,7 +27,7 @@ class FoodRepository @Inject constructor(
                     barCode = barCode,
                     fields = Product.fields.joinToString(",")
                 )
-                Timber.d(result.toString())
+                Timber.d("from api call: $result")
                 emit(ServiceResult.Success(result))
             } catch (e: Exception) {
                 e.printStackTrace()

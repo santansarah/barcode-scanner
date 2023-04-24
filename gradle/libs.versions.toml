@@ -1,5 +1,5 @@
 [versions]
-com-android-application = "8.1.0-alpha11"
+com-android-application = "8.1.0-beta01"
 org-jetbrains-kotlin-android = "1.8.10"
 core-ktx = "1.9.0"
 junit = "4.13.2"
@@ -22,6 +22,7 @@ lifecycle = "2.6.1"
 httpLogging = "4.9.3"
 paging = "3.1.1"
 composePaging = "1.0.0-alpha18"
+ktor = "2.3.0"
 
 [libraries]
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
@@ -55,6 +56,12 @@ httpLogging = { module = "com.squareup.okhttp3:logging-interceptor", version.ref
 pagingRuntime = { module="androidx.paging:paging-runtime", version.ref="paging"}
 paging = { module="androidx.paging:paging-compose", version.ref="composePaging"}
 #pagingCommon = { group = "androidx.paging", name = "paging-common-ktx", version.ref = "paging" }
+ktor = {module="io.ktor:ktor-client-core", version.ref="ktor"}
+ktorEngine = {module="io.ktor:ktor-client-android", version.ref="ktor"}
+ktorContentNegotiation = {module="io.ktor:ktor-client-content-negotiation", version.ref="ktor"}
+ktorJson = {module = "io.ktor:ktor-serialization-kotlinx-json", version.ref="ktor"}
+ktorLogging = {module="io.ktor:ktor-client-logging", version.ref="ktor"}
+gson = {module="com.squareup.retrofit2:converter-gson", version.ref="retrofit"}
 
 [plugins]
 com-android-application = { id = "com.android.application", version.ref = "com-android-application" }
@@ -64,6 +71,9 @@ kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "org-jetbrains-kotlin-a
 kotlinxSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlinxSerialization" }
 
 [bundles]
+ktor = [
+"ktor", "ktorEngine","ktorContentNegotiation", "ktorJson","ktorLogging"
+]
 hilt = [
     "hiltAndroid",
     #"hiltCompiler",
@@ -71,7 +81,8 @@ hilt = [
 ]
 retrofit = [
     "retrofit",
-    "jakeSerialization"
+    "jakeSerialization",
+    "gson"
 ]
 coil = [
 "coil", "coilBase"]
