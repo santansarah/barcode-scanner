@@ -1,12 +1,6 @@
 package com.santansarah.barcodescanner.ui.productdetail
 
-import android.util.Log
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -17,32 +11,21 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.TileMode
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.santansarah.barcodescanner.data.remote.ItemListing
 import com.santansarah.barcodescanner.data.remote.Product
 import com.santansarah.barcodescanner.data.remote.mock.bakersChocolate
-import com.santansarah.barcodescanner.data.remote.mock.cliffBar
-import com.santansarah.barcodescanner.data.remote.mock.cocMilkReal
-import com.santansarah.barcodescanner.data.remote.mock.coconutMilk
 import com.santansarah.barcodescanner.data.remote.mock.notfound
 import com.santansarah.barcodescanner.ui.components.MainAppBar
 import com.santansarah.barcodescanner.ui.productdetail.sections.NutritionData
 import com.santansarah.barcodescanner.ui.productdetail.sections.ProductImage
 import com.santansarah.barcodescanner.ui.productdetail.sections.ProductIngredients
 import com.santansarah.barcodescanner.ui.theme.BarcodeScannerTheme
-import com.santansarah.barcodescanner.ui.theme.gray
-import com.santansarah.barcodescanner.ui.theme.lightGray
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 

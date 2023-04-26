@@ -22,11 +22,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.santansarah.barcodescanner.data.remote.Product
 import com.santansarah.barcodescanner.ui.components.loadingBrush
+import com.santansarah.barcodescanner.ui.previewparams.ProductDetailParams
+import com.santansarah.barcodescanner.ui.previewparams.ProductDetails
+import com.santansarah.barcodescanner.ui.theme.BarcodeScannerTheme
 import com.santansarah.barcodescanner.ui.theme.brightYellow
 
 
@@ -55,16 +60,8 @@ fun ProductIngredients(product: Product?, isLoading: Boolean) {
 
         AnimatedContent(
             targetState = isLoading,
-            transitionSpec = {
-                fadeIn(animationSpec = tween(150, 150)) with
-                        fadeOut(animationSpec = tween(150)) using
-                        SizeTransform { initialSize, targetSize ->
-                            keyframes {
-                                IntSize(initialSize.width, targetSize.height) at 150
-                                durationMillis = 300
-                            }
-                        }
-            }, label = ""
+            transitionSpec = productLoadingTransitionSpec(),
+            label = "LoadingIngredients"
         ) { isLoading ->
             if (isLoading) {
                 Text(
@@ -86,5 +83,19 @@ fun ProductIngredients(product: Product?, isLoading: Boolean) {
                 )
             }
         }
+    }
+}
+
+
+@Preview
+@Composable
+fun PreviewProductIngredients(
+    @PreviewParameter(ProductDetailParams::class) featureParams: ProductDetails
+) {
+    BarcodeScannerTheme {
+        ProductIngredients(
+            product = featureParams.product,
+            isLoading = featureParams.isLoading
+        )
     }
 }

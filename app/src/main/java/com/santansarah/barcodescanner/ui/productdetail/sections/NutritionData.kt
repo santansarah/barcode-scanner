@@ -26,6 +26,8 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -34,7 +36,11 @@ import com.santansarah.barcodescanner.data.remote.Product
 import com.santansarah.barcodescanner.data.remote.formatToGrams
 import com.santansarah.barcodescanner.data.remote.formatToMgs
 import com.santansarah.barcodescanner.ui.components.TableCell
+import com.santansarah.barcodescanner.ui.components.TableRow
 import com.santansarah.barcodescanner.ui.components.loadingBrush
+import com.santansarah.barcodescanner.ui.previewparams.ProductDetailParams
+import com.santansarah.barcodescanner.ui.previewparams.ProductDetails
+import com.santansarah.barcodescanner.ui.theme.BarcodeScannerTheme
 import com.santansarah.barcodescanner.ui.theme.brightYellow
 
 @OptIn(ExperimentalTextApi::class, ExperimentalAnimationApi::class)
@@ -95,7 +101,7 @@ fun NutritionData(
             }
         }
 
-        NutritionData(
+        NutritionDetails(
             nutriments = product?.nutriments,
             servingSize = product?.servingSize ?: "Unknown"
         )
@@ -104,7 +110,7 @@ fun NutritionData(
 }
 
 @Composable
-fun NutritionData(
+fun NutritionDetails(
     nutriments: Nutriments?,
     servingSize: String
 ) {
@@ -209,19 +215,16 @@ fun NutritionData(
     }
 }
 
+
+@Preview
 @Composable
-private fun TableRow(
-    column1Weight: Float,
-    normalPadding: PaddingValues,
-    heading: String,
-    value: String,
-    column2Weight: Float
+fun PreviewNutritionData(
+    @PreviewParameter(ProductDetailParams::class) featureParams: ProductDetails
 ) {
-    Row(Modifier.fillMaxWidth()) {
-        TableCell(heading, weight = column1Weight, normalPadding, TextAlign.Start)
-        TableCell(
-            text = value,
-            weight = column2Weight, normalPadding, TextAlign.End
+    BarcodeScannerTheme {
+        NutritionData(
+            product = featureParams.product,
+            isLoading = featureParams.isLoading
         )
     }
 }

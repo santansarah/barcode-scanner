@@ -25,6 +25,7 @@ import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -32,6 +33,8 @@ import com.santansarah.barcodescanner.data.remote.ItemListing
 import com.santansarah.barcodescanner.data.remote.Product
 import com.santansarah.barcodescanner.data.remote.mock.bakersChocolate
 import com.santansarah.barcodescanner.ui.components.loadingBrush
+import com.santansarah.barcodescanner.ui.previewparams.ProductDetailParams
+import com.santansarah.barcodescanner.ui.previewparams.ProductDetails
 import com.santansarah.barcodescanner.ui.productdetail.ItemImageSlider
 import com.santansarah.barcodescanner.ui.theme.BarcodeScannerTheme
 import com.santansarah.barcodescanner.ui.theme.brightYellow
@@ -57,7 +60,8 @@ fun ProductImage(
         ) {
             AnimatedContent(
                 targetState = isLoading,
-                transitionSpec = productLoadingTransitionSpec(), label = ""
+                transitionSpec = productLoadingTransitionSpec(),
+                label = "LoadingProductImages"
             ) { isLoading ->
                 if (isLoading) {
                     Text(
@@ -114,33 +118,13 @@ fun ProductImage(
 
 @Preview
 @Composable
-fun PreviewProductImageLoading() {
+fun PreviewProductImageLoading(
+    @PreviewParameter(ProductDetailParams::class) featureParams: ProductDetails
+) {
     BarcodeScannerTheme {
-        ProductImage(product = null, isLoading = true)
-    }
-}
-
-@Preview
-@Composable
-fun PreviewProductImage() {
-
-    val item = Json {
-        ignoreUnknownKeys = true
-        isLenient = true
-        encodeDefaults = true
-        explicitNulls = false
-    }.decodeFromString<ItemListing>(bakersChocolate)
-
-    BarcodeScannerTheme {
-        ProductImage(product = item.product, isLoading = false)
-    }
-}
-
-@Preview
-@Composable
-fun PreviewProductImageNotFound() {
-
-    BarcodeScannerTheme {
-        ProductImage(product = null, isLoading = false)
+        ProductImage(
+            product = featureParams.product,
+            isLoading = featureParams.isLoading
+        )
     }
 }
