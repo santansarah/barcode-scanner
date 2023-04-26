@@ -1,6 +1,7 @@
 package com.santansarah.barcodescanner.ui.search
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -21,6 +22,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,6 +35,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -48,6 +51,8 @@ import com.santansarah.barcodescanner.data.remote.SearchResults
 import com.santansarah.barcodescanner.data.remote.mock.searchResults
 import com.santansarah.barcodescanner.ui.components.MainAppBar
 import com.santansarah.barcodescanner.ui.components.PlaceholderImage
+import com.santansarah.barcodescanner.ui.previewparams.SearchParams
+import com.santansarah.barcodescanner.ui.previewparams.SearchResultsFeature
 import com.santansarah.barcodescanner.ui.theme.BarcodeScannerTheme
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.serialization.decodeFromString
@@ -63,15 +68,14 @@ fun SearchRoute(
 
     val searchResults = viewModel.searchResults.collectAsLazyPagingItems()
     val searchText = viewModel.searchText.collectAsStateWithLifecycle().value
-    val searchError = viewModel.searchError.collectAsStateWithLifecycle().value
 
     ShowSearchResults(
         searchResults = searchResults,
         refreshLoadState = searchResults.loadState.refresh,
+        appendLoadState = searchResults.loadState.append,
         onBackClicked = onBackClicked,
         onGotBarcode = onGotBarcode,
         searchText = searchText,
-        searchError = searchError,
         onSearchValueChanged = viewModel::onSearchValueChanged,
         onSearch = viewModel::onSearch
     )
@@ -83,10 +87,10 @@ fun SearchRoute(
 fun ShowSearchResults(
     searchResults: LazyPagingItems<SearchProductItem>,
     refreshLoadState: LoadState,
+    appendLoadState: LoadState,
     onBackClicked: () -> Unit,
     onGotBarcode: (String) -> Unit,
     searchText: String,
-    searchError: Boolean,
     onSearchValueChanged: (String) -> Unit,
     onSearch: () -> Unit
 ) {
@@ -106,7 +110,11 @@ fun ShowSearchResults(
         if (refreshLoadState is LoadState.NotLoading)
             showLoadingScreen = false
 
-        Timber.d("showLoadingScreen: $showLoadingScreen ; load state: " + searchResults.loadState.toString())
+        var showAppendError by
+        rememberSaveable { mutableStateOf(false) }
+
+        if (appendLoadState is LoadState.Error)
+            showAppendError = true
 
         AnimatedContent(
             targetState = showLoadingScreen, label = "",
@@ -116,7 +124,7 @@ fun ShowSearchResults(
         ) {
             if (it)
                 SearchLoadingScreen(padding, searchText,
-                    (searchResults.loadState.refresh is LoadState.Error),
+                    (refreshLoadState is LoadState.Error),
                     onSearchValueChanged, onSearch
                 )
             else
@@ -136,6 +144,16 @@ fun ShowSearchResults(
                             )
                         }
                     }
+
+                    if (showAppendError) {
+                        item {
+                            Text(
+                                modifier = Modifier.padding(vertical = 12.dp),
+                                text = "Error loading more results..."
+                            )
+                        }
+                    }
+
                 }
         }
 
@@ -145,25 +163,22 @@ fun ShowSearchResults(
 
 @Preview
 @Composable
-fun PreviewSearchResults() {
+fun PreviewSearchResultsLoading(
+    @PreviewParameter(SearchParams::class) featureParams: SearchResultsFeature
+) {
 
-    val item = Json {
-        ignoreUnknownKeys = true
-    }.decodeFromString<SearchResults>(searchResults)
-    val placeHolder = item.products.map {
-        it.copy(imageUrl = null)
-    }
-
-    val loading = LoadState.Loading
+    val refreshLoadState = featureParams.refreshLoadState
+    val appendLoadState = featureParams.appendLoadState
 
     BarcodeScannerTheme {
         ShowSearchResults(
-            searchResults =
-            flowOf(PagingData.from(placeHolder)).collectAsLazyPagingItems(),
-            loading, {}, {},
-            "ice cream", false, {}, {}
+            searchResults = flowOf(PagingData.from(featureParams.searchResults.products))
+                .collectAsLazyPagingItems(),
+            refreshLoadState, appendLoadState, {}, {},
+            "ice cream", {}, {}
         )
     }
 
 }
+
 
