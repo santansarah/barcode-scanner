@@ -20,15 +20,21 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.santansarah.barcodescanner.ui.theme.BarcodeScannerTheme
 import com.santansarah.barcodescanner.ui.theme.gray
 import com.santansarah.barcodescanner.ui.theme.grayButton
 import com.santansarah.barcodescanner.ui.theme.lightestGray
@@ -93,5 +99,22 @@ fun SearchTextField(
         )
         //Spacer(Modifier.height(10.dp))
 
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewSearchField() {
+
+    var searchText by rememberSaveable {
+        mutableStateOf("")
+    }
+
+    BarcodeScannerTheme {
+        SearchTextField(searchText = searchText,
+            onValueChanged = {searchText = it},
+            onSearchWithText = {}) {
+
+        }
     }
 }

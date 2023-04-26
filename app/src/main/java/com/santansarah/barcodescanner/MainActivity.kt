@@ -27,19 +27,10 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    @Inject
-    lateinit var barcodeScanner: BarcodeScanner
-
-    @Inject
-    lateinit var imageLoader: ImageLoader
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
-
-            val result = barcodeScanner.barCodeResults.collectAsState()
 
             BarcodeScannerTheme {
                 // A surface container using the 'background' color from the theme

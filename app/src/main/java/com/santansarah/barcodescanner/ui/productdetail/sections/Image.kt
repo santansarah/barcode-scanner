@@ -21,11 +21,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import com.santansarah.barcodescanner.data.remote.ItemListing
 import com.santansarah.barcodescanner.data.remote.Product
+import com.santansarah.barcodescanner.data.remote.mock.bakersChocolate
 import com.santansarah.barcodescanner.ui.productdetail.ItemImageSlider
+import com.santansarah.barcodescanner.ui.theme.BarcodeScannerTheme
 import com.santansarah.barcodescanner.ui.theme.brightYellow
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -101,5 +107,29 @@ fun ProductImage(
                 imgBack = product?.imgNutritionUrl
             )
         }
+    }
+}
+
+@Preview
+@Composable
+fun PreviewProductImageLoading() {
+    BarcodeScannerTheme {
+        ProductImage(product = null, isLoading = true)
+    }
+}
+
+@Preview
+@Composable
+fun PreviewProductImage() {
+
+    val item = Json {
+        ignoreUnknownKeys = true
+        isLenient = true
+        encodeDefaults = true
+        explicitNulls = false
+    }.decodeFromString<ItemListing>(bakersChocolate)
+
+    BarcodeScannerTheme {
+        ProductImage(product = item.product, isLoading = false)
     }
 }

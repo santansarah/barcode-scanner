@@ -6,9 +6,6 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -17,11 +14,12 @@ import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.tooling.preview.Preview
 import com.santansarah.barcodescanner.R
+import com.santansarah.barcodescanner.ui.components.lightGrayShimmer
+import com.santansarah.barcodescanner.ui.theme.BarcodeScannerTheme
 
 @Composable
 fun AnimatedFoodIcon() {
@@ -43,11 +41,7 @@ fun AnimatedFoodIcon() {
                 with(drawContext.canvas.nativeCanvas) {
                     val checkPoint = saveLayer(null, null)
                     val brush = Brush.linearGradient(
-                        colors = listOf(
-                            Color(0xFFdfe2de),
-                            Color(0xFFcacfc9),
-                            Color(0xFFdfe2de),
-                        ),
+                        lightGrayShimmer,
                         start = Offset.Zero,
                         end = Offset(progress, progress)
 
@@ -68,4 +62,13 @@ fun AnimatedFoodIcon() {
             },
         contentDescription = null
     )
+}
+
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewAnimatedSearchImageLoading() {
+    BarcodeScannerTheme {
+        AnimatedFoodIcon()
+    }
 }

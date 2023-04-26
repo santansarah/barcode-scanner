@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.santansarah.barcodescanner.data.remote.Product
-import com.santansarah.barcodescanner.ui.productdetail.loadingBrush
+import com.santansarah.barcodescanner.ui.components.loadingBrush
 import com.santansarah.barcodescanner.ui.theme.brightYellow
 
 

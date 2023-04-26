@@ -27,7 +27,7 @@ class BarcodeScanner(
             barCodeResults.value = result.rawValue
             Timber.d(barCodeResults.value)
         } catch (e: Exception) {
-            Timber.d("scan error: ${e.message}")
+            Timber.d("scan error: $e")
         }
     }
 

@@ -6,7 +6,6 @@ val redishMagenta = Color(0xFFe0002d)
 val primary = Color(0xFF282829)
 val darkBackground =  Color(0xFF7cff1f)  //Color(0xFF90ff41)
 val cardBackground = Color(0xFFeef7e8)
-val lightShader = Color(0xFFdfe2de)
 
 val brightYellow = Color(0xFFF7FF00)
 

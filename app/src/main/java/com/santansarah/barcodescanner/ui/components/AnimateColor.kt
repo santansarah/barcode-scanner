@@ -13,14 +13,15 @@ import androidx.compose.ui.graphics.Color
 @Composable
 fun AnimateColor(
     startColor: Color,
-    endColor: Color
+    endColor: Color,
+    duration: Int
 ): Color {
     val infiniteTransition = rememberInfiniteTransition(label = "")
     val color by infiniteTransition.animateColor(
         initialValue = startColor,
         targetValue = endColor,
         animationSpec = infiniteRepeatable(
-            animation = tween(300, easing = LinearEasing),
+            animation = tween(duration, easing = LinearEasing),
             repeatMode = RepeatMode.Reverse
         ), label = ""
     )

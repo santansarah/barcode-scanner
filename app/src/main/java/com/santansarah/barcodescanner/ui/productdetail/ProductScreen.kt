@@ -31,6 +31,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.santansarah.barcodescanner.data.remote.ItemListing
 import com.santansarah.barcodescanner.data.remote.Product
+import com.santansarah.barcodescanner.data.remote.mock.bakersChocolate
 import com.santansarah.barcodescanner.data.remote.mock.cliffBar
 import com.santansarah.barcodescanner.data.remote.mock.cocMilkReal
 import com.santansarah.barcodescanner.data.remote.mock.coconutMilk
@@ -62,35 +63,6 @@ fun ProductDetailsRoute(
         code = barcode
     )
 
-}
-
-@Composable
-fun loadingBrush(fontSize: TextUnit): Brush {
-    val currentFontSizePx = with(LocalDensity.current) { fontSize.toPx() }
-    val currentFontSizeDoublePx = currentFontSizePx * 2
-
-    val infiniteTransition = rememberInfiniteTransition(label = "")
-    val offset by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = currentFontSizeDoublePx,
-        animationSpec = infiniteRepeatable(
-            tween(
-                1000,
-                easing = LinearEasing
-            )
-        ), label = ""
-    )
-
-    return Brush.linearGradient(
-        colors = listOf(
-            gray,
-            lightGray,
-            gray,
-        ),
-        start = Offset(0f, offset),
-        end = Offset(offset + currentFontSizePx, offset + currentFontSizePx),
-        tileMode = TileMode.Mirror
-    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
@@ -141,7 +113,7 @@ fun PreviewItemDetails() {
         isLenient = true
         encodeDefaults = true
         explicitNulls = false
-    }.decodeFromString<ItemListing>(cocMilkReal)
+    }.decodeFromString<ItemListing>(bakersChocolate)
     val placeHolderImage = item.copy(
         product =
         item.product!!.copy(imgFrontUrl = null, imgNutritionUrl = null)

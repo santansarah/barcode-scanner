@@ -34,10 +34,8 @@ import com.santansarah.barcodescanner.data.remote.Product
 import com.santansarah.barcodescanner.data.remote.formatToGrams
 import com.santansarah.barcodescanner.data.remote.formatToMgs
 import com.santansarah.barcodescanner.ui.components.TableCell
-import com.santansarah.barcodescanner.ui.productdetail.loadingBrush
+import com.santansarah.barcodescanner.ui.components.loadingBrush
 import com.santansarah.barcodescanner.ui.theme.brightYellow
-import com.santansarah.barcodescanner.utils.toMgs
-import com.santansarah.barcodescanner.utils.valueOrZero
 
 @OptIn(ExperimentalTextApi::class, ExperimentalAnimationApi::class)
 @Composable
@@ -184,7 +182,7 @@ fun NutritionData(
             column1Weight = column1Weight,
             normalPadding = normalPadding,
             heading = "Carbohydrates",
-            value = nutriments?.carbohydrates.toString() + "g",
+            value = nutriments?.carbohydrates.formatToGrams() + "g",
             column2Weight = column2Weight,
         )
         TableRow(
