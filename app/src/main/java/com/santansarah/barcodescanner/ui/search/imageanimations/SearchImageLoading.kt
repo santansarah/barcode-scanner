@@ -4,10 +4,14 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.with
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -54,15 +58,24 @@ fun ColorChangingImageLoading() {
 @OptIn(ExperimentalAnimationApi::class)
 fun searchImageLoadingTransition(): AnimatedContentScope<Boolean>.() -> ContentTransform =
     {
-        slideInHorizontally(
+        slideInVertically(
+            initialOffsetY = { -it },
+            animationSpec = spring(Spring.DampingRatioMediumBouncy)
+        ) with
+                slideOutVertically(
+                    targetOffsetY = { it },
+                    animationSpec = spring(Spring.StiffnessHigh)
+                ) + fadeOut()
+    }
+        /*slideInHorizontally(
             initialOffsetX = { -300 },
-            animationSpec = tween(durationMillis = 500)
+            animationSpec = tween(durationMillis = 300)
         ) with
                 slideOutHorizontally(
                     targetOffsetX = { 300 },
-                    animationSpec = tween(durationMillis = 500)
+                    animationSpec = tween(durationMillis = 300)
                 ) + fadeOut()
-    }
+    }*/
 
 @Preview(showBackground = true)
 @Composable

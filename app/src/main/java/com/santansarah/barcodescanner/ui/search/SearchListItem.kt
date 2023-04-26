@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -31,14 +32,25 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.paging.PagingData
+import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Size
 import com.santansarah.barcodescanner.data.remote.SearchProductItem
+import com.santansarah.barcodescanner.data.remote.SearchResults
+import com.santansarah.barcodescanner.data.remote.mock.searchResults
+import com.santansarah.barcodescanner.ui.components.PlaceholderImage
 import com.santansarah.barcodescanner.ui.search.imageanimations.ColorChangingImageLoading
 import com.santansarah.barcodescanner.ui.search.imageanimations.searchImageLoadingTransition
+import com.santansarah.barcodescanner.ui.theme.BarcodeScannerTheme
+import com.santansarah.barcodescanner.ui.theme.darkBackground
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import timber.log.Timber
 
 
@@ -166,6 +178,38 @@ fun ProductSearchListItem(
         }
         Divider(thickness = 2.dp, color = Color.DarkGray)
         Spacer(Modifier.height(10.dp))
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewSearchItem() {
+
+    val item = Json {
+        ignoreUnknownKeys = true
+    }.decodeFromString<SearchResults>(searchResults)
+    val placeHolder = item.products.map {
+        it.copy(imageUrl = null)
+    }
+
+    BarcodeScannerTheme {
+        Surface(
+           color = darkBackground
+        ) {
+            Column {
+                ProductSearchListItem(productInfo = item.products[0], onGotBarcode = {}, {
+                    PlaceholderImage(
+                        description = ""
+                    )
+                })
+                Spacer(modifier = Modifier.height(12.dp))
+                ProductSearchListItem(productInfo = item.products[1], onGotBarcode = {}, {
+                    PlaceholderImage(
+                        description = ""
+                    )
+                })
+            }
+        }
     }
 }
 

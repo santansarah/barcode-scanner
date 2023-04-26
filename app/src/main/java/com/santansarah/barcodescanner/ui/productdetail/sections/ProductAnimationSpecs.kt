@@ -8,15 +8,27 @@ import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.with
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.ExperimentalTextApi
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.santansarah.barcodescanner.ui.components.loadingBrush
+import com.santansarah.barcodescanner.ui.theme.BarcodeScannerTheme
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun productLoadingTransitionSpec(): AnimatedContentScope<Boolean>.() -> ContentTransform =
     {
-        fadeIn(animationSpec = tween(150, 150)) with
+        slideInVertically(initialOffsetY = {-500},
+            animationSpec = tween(150, 0)) with
                 fadeOut(animationSpec = tween(150)) using
                 SizeTransform { initialSize, targetSize ->
                     keyframes {
@@ -25,3 +37,21 @@ fun productLoadingTransitionSpec(): AnimatedContentScope<Boolean>.() -> ContentT
                     }
                 }
     }
+
+
+@OptIn(ExperimentalTextApi::class)
+@Preview(showBackground = true)
+@Composable
+fun PreviewLoadingText() {
+    BarcodeScannerTheme {
+        Text(
+            modifier = Modifier
+                .padding(6.dp),
+            text = "Loading",
+            style = TextStyle(
+                brush = loadingBrush(fontSize = 14.sp),
+                fontSize = 14.sp
+            )
+        )
+    }
+}

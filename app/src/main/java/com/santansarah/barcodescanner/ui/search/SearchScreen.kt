@@ -2,6 +2,9 @@ package com.santansarah.barcodescanner.ui.search
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.with
@@ -44,6 +47,7 @@ import com.santansarah.barcodescanner.data.remote.SearchProductItem
 import com.santansarah.barcodescanner.data.remote.SearchResults
 import com.santansarah.barcodescanner.data.remote.mock.searchResults
 import com.santansarah.barcodescanner.ui.components.MainAppBar
+import com.santansarah.barcodescanner.ui.components.PlaceholderImage
 import com.santansarah.barcodescanner.ui.theme.BarcodeScannerTheme
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.serialization.decodeFromString
@@ -63,6 +67,7 @@ fun SearchRoute(
 
     ShowSearchResults(
         searchResults = searchResults,
+        refreshLoadState = searchResults.loadState.refresh,
         onBackClicked = onBackClicked,
         onGotBarcode = onGotBarcode,
         searchText = searchText,
@@ -77,6 +82,7 @@ fun SearchRoute(
 @Composable
 fun ShowSearchResults(
     searchResults: LazyPagingItems<SearchProductItem>,
+    refreshLoadState: LoadState,
     onBackClicked: () -> Unit,
     onGotBarcode: (String) -> Unit,
     searchText: String,
@@ -97,7 +103,7 @@ fun ShowSearchResults(
         var showLoadingScreen by
         rememberSaveable { mutableStateOf(true) }
 
-        if (searchResults.loadState.refresh is LoadState.NotLoading)
+        if (refreshLoadState is LoadState.NotLoading)
             showLoadingScreen = false
 
         Timber.d("showLoadingScreen: $showLoadingScreen ; load state: " + searchResults.loadState.toString())
@@ -105,7 +111,7 @@ fun ShowSearchResults(
         AnimatedContent(
             targetState = showLoadingScreen, label = "",
             transitionSpec = {
-                slideInHorizontally { it } with slideOutHorizontally { -it }
+                slideInHorizontally { it } with slideOutHorizontally { -it } + fadeOut()
             }
         ) {
             if (it)
@@ -137,112 +143,6 @@ fun ShowSearchResults(
     }
 }
 
-@Composable
-fun PlaceholderImage(
-    description: String
-) {
-    Image(
-        modifier = Modifier
-            //.clip(RoundedCornerShape(20.dp))
-            .height(140.dp)
-            .width(100.dp)
-            .border(2.dp, Color(0xFFcacfc9)),
-        //.border(1.dp, Color(0xFFf9004b), RoundedCornerShape(20.dp)),
-        painter = painterResource(id = R.drawable.food_placholder),
-        contentDescription = description,
-        colorFilter = ColorFilter.tint(Color(0xFFcacfc9))
-    )
-}
-
-
-@Preview
-@Composable
-fun PreviewResultItemsNoImage() {
-
-    val item = Json {
-        ignoreUnknownKeys = true
-    }.decodeFromString<SearchResults>(searchResults)
-    val placeHolder = item.products.map {
-        it.copy(imageUrl = null)
-    }
-    val itemsFlow =
-        flowOf(PagingData.from(placeHolder)).collectAsLazyPagingItems()
-
-    BarcodeScannerTheme {
-        Surface(
-            color = MaterialTheme.colorScheme.background
-        ) {
-
-            LazyColumn(
-                state = rememberLazyListState(),
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-
-                itemsIndexed(itemsFlow) { idx, productInfo ->
-                    ProductSearchListItem(productInfo, { },
-                        { productInfo?.productName?.let { PlaceholderImage(description = it) } })
-                }
-            }
-        }
-    }
-
-}
-
-@Preview
-@Composable
-fun PreviewResultItems() {
-
-    val item = Json {
-        ignoreUnknownKeys = true
-    }.decodeFromString<SearchResults>(searchResults)
-    val placeHolder = item.products.map {
-        it.copy(imageUrl = null)
-    }
-    val itemsFlow =
-        flowOf(PagingData.from(placeHolder)).collectAsLazyPagingItems()
-
-    BarcodeScannerTheme {
-        Surface(
-            color = MaterialTheme.colorScheme.background
-        ) {
-
-            LazyColumn(
-                state = rememberLazyListState(),
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-
-                itemsIndexed(itemsFlow) { idx, productInfo ->
-                    ProductSearchListItem(productInfo, { },
-                        {
-
-                            val previewImage = if (idx % 2 == 0)
-                                painterResource(id = R.drawable.mock_image)
-                            else
-                                painterResource(id = R.drawable.mock_landscape)
-
-                            Image(
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier
-                                    //.clip(RoundedCornerShape(20.dp))
-                                    .height(140.dp)
-                                    .width(100.dp)
-                                    .border(1.dp, Color(0xFFf9004b))
-                                    .background(Color.DarkGray),
-                                painter = previewImage,
-                                contentDescription = ""
-                            )
-                        })
-                }
-            }
-        }
-    }
-
-}
-
 @Preview
 @Composable
 fun PreviewSearchResults() {
@@ -254,10 +154,13 @@ fun PreviewSearchResults() {
         it.copy(imageUrl = null)
     }
 
+    val loading = LoadState.Loading
+
     BarcodeScannerTheme {
         ShowSearchResults(
             searchResults =
-            flowOf(PagingData.from(placeHolder)).collectAsLazyPagingItems(), {}, {},
+            flowOf(PagingData.from(placeHolder)).collectAsLazyPagingItems(),
+            loading, {}, {},
             "ice cream", false, {}, {}
         )
     }

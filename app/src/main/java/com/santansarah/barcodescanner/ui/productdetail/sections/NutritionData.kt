@@ -70,16 +70,8 @@ fun NutritionData(
 
         AnimatedContent(
             targetState = isLoading,
-            transitionSpec = {
-                fadeIn(animationSpec = tween(150, 150)) with
-                        fadeOut(animationSpec = tween(150)) using
-                        SizeTransform { initialSize, targetSize ->
-                            keyframes {
-                                IntSize(initialSize.width, targetSize.height) at 150
-                                durationMillis = 300
-                            }
-                        }
-            }, label = ""
+            transitionSpec = productLoadingTransitionSpec(),
+            label = "LoadingNutrition"
         ) { isLoading ->
             if (isLoading) {
                 Text(

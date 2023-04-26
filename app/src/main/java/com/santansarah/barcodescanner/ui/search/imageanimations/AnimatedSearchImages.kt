@@ -32,15 +32,17 @@ fun LESearchImagesAnimations() {
                 it.animateOrder
             }
 
-        animatedImages.forEach { img ->
-            AnimatedSearchImages.scaleImage(
-                onValueChanged = {
-                    AnimatedSearchImages.updateAnimatedSearchScale(
-                        img.imageId, it
-                    )
-                }
-            )
-            delay(500)
+        repeat(3) {
+            animatedImages.forEach { img ->
+                AnimatedSearchImages.scaleImage(
+                    onValueChanged = {
+                        AnimatedSearchImages.updateAnimatedSearchScale(
+                            img.imageId, it
+                        )
+                    }
+                )
+                delay(500)
+            }
         }
 
     }
