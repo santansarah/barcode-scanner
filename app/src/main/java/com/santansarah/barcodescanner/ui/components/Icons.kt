@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.santansarah.barcodescanner.R
+import com.santansarah.barcodescanner.ui.theme.lightestGray
 
 @Composable
 fun BackIcon(
@@ -22,7 +23,8 @@ fun BackIcon(
 ) {
     Icon(
         imageVector = Icons.Default.ArrowBack,
-        contentDescription = contentDesc
+        contentDescription = contentDesc,
+        tint = lightestGray
     )
 }
 

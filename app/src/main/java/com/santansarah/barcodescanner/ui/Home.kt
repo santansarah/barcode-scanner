@@ -74,6 +74,7 @@ import com.santansarah.barcodescanner.R
 import com.santansarah.barcodescanner.ui.components.MainAppBar
 import com.santansarah.barcodescanner.ui.components.SearchTextField
 import com.santansarah.barcodescanner.ui.theme.BarcodeScannerTheme
+import com.santansarah.barcodescanner.ui.theme.blueButton
 import com.santansarah.barcodescanner.ui.theme.brightYellow
 import com.santansarah.barcodescanner.ui.theme.cardBackground
 import com.santansarah.barcodescanner.ui.theme.gray
@@ -116,7 +117,7 @@ fun HomeScreen(
     Scaffold(
         topBar = {
             MainAppBar(
-                onBackClicked = { },
+                onBackClicked = null,
                 title = "Welcome"
             )
         }
@@ -254,7 +255,7 @@ fun HomeScreen(
                         TextButton(
                             modifier = Modifier
                                 .width(130.dp)
-                                .background(grayButton),
+                                .background(blueButton),
                             colors = ButtonDefaults.outlinedButtonColors(
                                 //containerColor = Color(0xFF076C94),
                                 contentColor = Color.Black

@@ -13,6 +13,7 @@ val lightestGray = Color(0xFFdfe2de)
 val lightGray = Color(0xFFcacfc9)
 val gray = Color(0xFFabb0aa)
 val grayButton = Color(0xFF353133)
+val blueButton = Color(0xFF25007a)
 
 val Purple80 = Color(0xFFD0BCFF)
 val PurpleGrey80 = Color(0xFFCCC2DC)

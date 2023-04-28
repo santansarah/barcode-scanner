@@ -9,6 +9,7 @@ import com.santansarah.barcodescanner.data.remote.SearchResults
 import com.santansarah.barcodescanner.domain.ErrorCode
 import com.santansarah.barcodescanner.utils.ServiceResult
 import timber.log.Timber
+import java.io.IOException
 import java.net.SocketTimeoutException
 import javax.inject.Inject
 import kotlin.math.ceil
@@ -70,11 +71,15 @@ class ProductSearchPagingSource constructor(
             Timber.d(result.toString())
             ServiceResult.Success(result)
         } catch (e: Exception) {
-            e.printStackTrace()
-            if (e is SocketTimeoutException)
-                ServiceResult.Error(ErrorCode.API_ERROR)
-            else
-                ServiceResult.Error(ErrorCode.API_ERROR)
+            Timber.d(e.toString())
+            when (e) {
+                is SocketTimeoutException ->
+                    ServiceResult.Error(ErrorCode.API_SEARCH_TIMEOUT)
+                is IOException ->
+                    ServiceResult.Error(ErrorCode.NETWORK_ERROR)
+                else ->
+                    ServiceResult.Error(ErrorCode.API_ERROR)
+            }
         }
     }
 }

@@ -23,6 +23,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.santansarah.barcodescanner.domain.ErrorCode
 import com.santansarah.barcodescanner.ui.search.imageanimations.AnimatedSearchImages
 import com.santansarah.barcodescanner.ui.components.SearchTextField
 import com.santansarah.barcodescanner.ui.components.searchLoadingBrush
@@ -37,7 +38,7 @@ import com.santansarah.barcodescanner.ui.theme.redishMagenta
 fun SearchLoadingScreen(
     padding: PaddingValues,
     searchText: String,
-    error: Boolean,
+    error: String?,
     onSearchValueChanged: (String) -> Unit,
     onSearch: () -> Unit
 ) {
@@ -64,8 +65,7 @@ fun SearchLoadingScreen(
                     .background(brightYellow)
                     .fillMaxWidth()
             ) {
-                val header = if (error) "Try again" else
-                    "Processing..."
+                val header = error?.let{ "Try again" } ?: "Processing..."
                 Text(
                     modifier = Modifier
                         .padding(6.dp),
@@ -75,13 +75,13 @@ fun SearchLoadingScreen(
             }
             Divider(thickness = 2.dp, color = Color.DarkGray)
 
-            AnimatedSearchImageRow(error, AnimatedSearchImages.imageList.take(3))
+            AnimatedSearchImageRow((error != null), AnimatedSearchImages.imageList.take(3))
 
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                if (!error) {
+                if (error == null) {
                     SearchLoadingShimmerText()
                     Text(
                         modifier = Modifier
@@ -94,8 +94,7 @@ fun SearchLoadingScreen(
                     Text(
                         modifier = Modifier
                             .padding(bottom = 14.dp),
-                        text = "Your search is taking longer than expected. " +
-                                "Try again, or use more specific keywords.",
+                        text = error,
                         style = TextStyle(
                             color = redishMagenta,
                             fontSize = 28.sp
@@ -113,7 +112,7 @@ fun SearchLoadingScreen(
 
             }
 
-            AnimatedSearchImageRow(error, AnimatedSearchImages.imageList.takeLast(3))
+            AnimatedSearchImageRow((error != null), AnimatedSearchImages.imageList.takeLast(3))
 
         }
 
@@ -156,7 +155,7 @@ fun PreviewSearchLoading() {
             SearchLoadingScreen(
                 padding = PaddingValues(),
                 searchText = "keto bomb",
-                error = false,
+                error = null,
                 {}, {}
             )
         }
@@ -175,7 +174,7 @@ fun PreviewSearchNotFound() {
             SearchLoadingScreen(
                 padding = PaddingValues(),
                 searchText = "keto bomb",
-                error = true,
+                error = ErrorCode.API_ERROR.message,
                 {}, {}
             )
         }

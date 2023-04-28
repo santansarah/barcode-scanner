@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -34,9 +35,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
@@ -110,11 +116,15 @@ fun ShowSearchResults(
         if (refreshLoadState is LoadState.NotLoading)
             showLoadingScreen = false
 
-        var showAppendError by
-        rememberSaveable { mutableStateOf(false) }
+        var appendError by
+        rememberSaveable { mutableStateOf<String?>(null) }
 
         if (appendLoadState is LoadState.Error)
-            showAppendError = true
+            appendError = appendLoadState.error.message
+
+        val errorMessage = if (refreshLoadState is LoadState.Error) {
+            refreshLoadState.error.message
+        } else null
 
         AnimatedContent(
             targetState = showLoadingScreen, label = "",
@@ -123,8 +133,9 @@ fun ShowSearchResults(
             }
         ) {
             if (it)
-                SearchLoadingScreen(padding, searchText,
-                    (refreshLoadState is LoadState.Error),
+                SearchLoadingScreen(
+                    padding, searchText,
+                    errorMessage,
                     onSearchValueChanged, onSearch
                 )
             else
@@ -145,12 +156,35 @@ fun ShowSearchResults(
                         }
                     }
 
-                    if (showAppendError) {
+                    appendError?.let {
+
+                        val annotatedString = buildAnnotatedString {
+                            append("$it ")
+
+                            pushStringAnnotation(tag = "tryAgain", annotation = "tryAgain")
+                            withStyle(
+                                style = SpanStyle(
+                                    textDecoration = TextDecoration.Underline
+                                )
+                            ) {
+                                append("Try Again.")
+                            }
+                            pop()
+                        }
+
                         item {
-                            Text(
-                                modifier = Modifier.padding(vertical = 12.dp),
-                                text = "Error loading more results..."
-                            )
+
+                            ClickableText(
+                                modifier = Modifier.padding(16.dp),
+                                text = annotatedString,
+                                onClick = { offset ->
+                                    annotatedString.getStringAnnotations(
+                                        tag = "tryAgain", start = offset, end = offset
+                                    ).firstOrNull()?.let { _ ->
+                                        // don't invalidate the PagingSource here
+                                        searchResults.retry()
+                                    }
+                                })
                         }
                     }
 
