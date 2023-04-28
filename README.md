@@ -1,5 +1,9 @@
 # Food Tracker Jetpack Compose App
 
+## Complete YouTube Playlist
+
+<a href="https://www.youtube.com/playlist?list=PLzxawGXQRFsyVnwtFGoLlwdPr039g6WLe" target="_blank"><img src="https://img.youtube.com/vi/keiuMUX1k0k/0.jpg"></a>
+
 ## UX Optimized Search Field in Jetpack Compose: FocusManager, InteractionSource, KeyboardOptions
 
 Today I’m going to talk about how to build a UX optimized search field with Jetpack Compose. This
