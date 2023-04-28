@@ -49,16 +49,16 @@ fun SearchTextField(
     onSearch: (() -> Unit)?
 ) {
 
-    // 1. Make sure you can request focus when you need to, for example, when a user
+    // 1. Make sure that you can request focus when you need to, for example, when a user
     //    clicks the red 'x' to remove existing text.
     val searchFocusRequester = remember {FocusRequester()}
 
-    // 2. Keep track of when the search icon is pressed; we'll use this later for an
+    // 2. Next, keep track of when the search icon is pressed; we'll use this later for an
     //    animation.
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
 
-    //    Animation to make the search icon bigger when it's pressed, to
+    //    This animation makes the search icon bigger when it's pressed, to
     //    indicate a responsive design.
     val searchIconSize by animateFloatAsState(
         targetValue = 1.5f,
@@ -126,7 +126,7 @@ fun SearchTextField(
                     Icon(
                         imageVector = Icons.Default.Search,
                         contentDescription = "Search for products",
-                        Modifier.scale(if (isPressed) searchIconSize else 1f)
+                        Modifier.scale(if (isPressed) searchIconSize else 1f) // pressed: make bigger
                     )
                 }
             }
