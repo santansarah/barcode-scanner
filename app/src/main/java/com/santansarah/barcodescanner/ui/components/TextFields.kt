@@ -9,7 +9,9 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -34,6 +36,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.santansarah.barcodescanner.ui.theme.BarcodeScannerTheme
 import com.santansarah.barcodescanner.ui.theme.blueButton
 import com.santansarah.barcodescanner.ui.theme.gray
@@ -53,7 +56,7 @@ fun SearchTextField(
     //    clicks the red 'x' to remove existing text.
     val searchFocusRequester = remember {FocusRequester()}
 
-    // 2. Next, keep track of when the search icon is pressed; we'll use this later for an
+    // 2. Next, keep track of when the search icon is tapped; this is used later for an
     //    animation.
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
@@ -81,6 +84,7 @@ fun SearchTextField(
             ),
             keyboardActions = KeyboardActions(
                 onSearch = {
+                    //  4. Always trim your search text, and require a minimum length.
                     if (searchText.trim().length >= 2) {
                         onSearchWithText?.let {
                             it(searchText.trim())
@@ -96,7 +100,7 @@ fun SearchTextField(
             onValueChange = { onValueChanged(it) },
             leadingIcon = {
 
-                Row() {
+                Row {
                     if (searchText.isNotEmpty()) {
                         IconButton(onClick = {          // clear search text, and request focus
                             onValueChanged("")
@@ -115,12 +119,12 @@ fun SearchTextField(
             trailingIcon = {
                 IconButton(
                     interactionSource = interactionSource,
-                    enabled = (searchText.trim().length >= 2),  // 4. Require a search minimum.
+                    enabled = (searchText.trim().length >= 2),  // Again, require a search minimum.
                     colors = IconButtonDefaults.iconButtonColors(
                         disabledContentColor = gray,
                         contentColor = blueButton
                     ),
-                    onClick = {  // 5. Always trim your search text.
+                    onClick = {
                         onSearchWithText?.let { it(searchText.trim()) } ?: onSearch?.let { it() }
                     }) {
                     Icon(
