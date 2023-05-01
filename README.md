@@ -11,3 +11,12 @@ Search field integrates various details that take time to program into our apps,
 difference when it comes to keeping our users happy and coming back.
 
 [![UX Search Field](https://img.youtube.com/vi/GIO1XYMAuzU/0.jpg)](https://www.youtube.com/watch?v=GIO1XYMAuzU)
+
+## UX cont...: Use Coil and Jetpack Compose Animations for Long API Calls
+
+This video is all about animating colors, creating shimmers, scaling icons, and using Coil to handle 
+image requests. When you’re dealing with long API calls and it’s imperative that your app appears 
+responsive while it’s doing work in the background, animations can be an absolute must for creating 
+great User Experiences.
+
+[![Shimmers](https://img.youtube.com/vi/Kfwag68hMlk/0.jpg)](https://www.youtube.com/watch?v=Kfwag68hMlk)
