@@ -37,6 +37,7 @@ import com.santansarah.barcodescanner.data.remote.formatToGrams
 import com.santansarah.barcodescanner.data.remote.formatToMgs
 import com.santansarah.barcodescanner.ui.components.TableCell
 import com.santansarah.barcodescanner.ui.components.TableRow
+import com.santansarah.barcodescanner.ui.components.darkGrayShimmer
 import com.santansarah.barcodescanner.ui.components.loadingBrush
 import com.santansarah.barcodescanner.ui.previewparams.ProductDetailParams
 import com.santansarah.barcodescanner.ui.previewparams.ProductDetails
@@ -79,7 +80,7 @@ fun NutritionData(
                         .padding(6.dp),
                     text = "Loading",
                     style = TextStyle(
-                        brush = loadingBrush(fontSize = 14.sp),
+                        brush = loadingBrush(fontSize = 14.sp, darkGrayShimmer),
                         fontSize = 14.sp
                     )
                 )

@@ -18,6 +18,7 @@ class ProductSearchPagingSource constructor(
     private val foodApi: FoodApi,
     private val searchText: String
 ) : PagingSource<Int, SearchProductItem>() {
+
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, SearchProductItem> {
         val currentPage = params.key ?: 1
 
@@ -28,6 +29,8 @@ class ProductSearchPagingSource constructor(
 
                 /* val totalPages = ceil(results.data.count.toDouble()
                      .div(results.data.pageSize.toDouble())).toInt()*/
+
+                // 1 x 24 (24) >= 119; 5 x 24 (120) >= 119
                 val onLastPage =
                     results.data.page.times(results.data.pageSize) >= (results.data.count ?: 0)
                 Timber.d("Refreshing search: $currentPage, $onLastPage")
@@ -41,7 +44,7 @@ class ProductSearchPagingSource constructor(
 
             is ServiceResult.Error -> {
                 Timber.d("Api error")
-                return LoadResult.Error(Throwable(message = results.error.name))
+                return LoadResult.Error(Throwable(message = results.error.message))
             }
 
             is ServiceResult.Loading -> {

@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.santansarah.barcodescanner.data.remote.Product
+import com.santansarah.barcodescanner.ui.components.darkGrayShimmer
 import com.santansarah.barcodescanner.ui.components.loadingBrush
 import com.santansarah.barcodescanner.ui.previewparams.ProductDetailParams
 import com.santansarah.barcodescanner.ui.previewparams.ProductDetails
@@ -70,7 +71,7 @@ fun ProductIngredients(product: Product?, isLoading: Boolean) {
                         .padding(horizontal = 6.dp, vertical = 12.dp),
                     text = "Loading",
                     style = TextStyle(
-                        brush = loadingBrush(fontSize = 16.sp),
+                        brush = loadingBrush(fontSize = 16.sp, darkGrayShimmer),
                         fontSize = 16.sp
                     )
                 )

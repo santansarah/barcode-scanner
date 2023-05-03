@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -52,7 +53,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import timber.log.Timber
-
+import com.santansarah.barcodescanner.R
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -62,6 +63,7 @@ fun ProductSearchListItem(
     placeHolderImage: @Composable () -> Unit
 ) {
     productInfo?.let {
+        Divider(thickness = 2.dp, color = Color.DarkGray)
         ElevatedCard(
             modifier = Modifier
                 .fillMaxWidth()
@@ -98,7 +100,8 @@ fun ProductSearchListItem(
                                     .data(it)
                                     .size(Size.ORIGINAL)
                                     .build(),
-                                contentScale = ContentScale.Crop
+                                contentScale = ContentScale.Crop,
+                                error = painterResource(id = R.drawable.food_placholder)
                             )
 
                             var showLoadingAnimation by

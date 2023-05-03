@@ -11,17 +11,29 @@ import com.santansarah.barcodescanner.domain.ErrorCode
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
+/**
+ * To see all of my states, I need the search results,
+ * the initial fetch state, and the append state.
+ */
 data class SearchResultsFeature(
     val searchResults: SearchResults,
     val refreshLoadState: LoadState,
-    val appendLoadState: LoadState,
-    val errorMessage: String? = null
+    val appendLoadState: LoadState
 )
 
+/**
+ * Here, I manually decode the search results into a SearchResults
+ * data class, using the searchResults mock JSON that we saw earlier.
+ */
 val chipsSearchResults = Json {
     ignoreUnknownKeys = true
 }.decodeFromString<SearchResults>(searchResults)
 
+/**
+ * Now, with the PreviewParameterProvider, I can set up
+ * all of the Paging states that I need to track,
+ * along with the corresponding ErrorCode messages.
+ */
 class SearchParams : PreviewParameterProvider<SearchResultsFeature> {
 
     override val values = sequenceOf(

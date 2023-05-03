@@ -77,6 +77,7 @@ import com.santansarah.barcodescanner.ui.theme.BarcodeScannerTheme
 import com.santansarah.barcodescanner.ui.theme.blueButton
 import com.santansarah.barcodescanner.ui.theme.brightYellow
 import com.santansarah.barcodescanner.ui.theme.cardBackground
+import com.santansarah.barcodescanner.ui.theme.darkButton
 import com.santansarah.barcodescanner.ui.theme.gray
 import com.santansarah.barcodescanner.ui.theme.grayButton
 import com.santansarah.barcodescanner.ui.theme.lightGray
@@ -255,7 +256,7 @@ fun HomeScreen(
                         TextButton(
                             modifier = Modifier
                                 .width(130.dp)
-                                .background(blueButton),
+                                .background(darkButton),
                             colors = ButtonDefaults.outlinedButtonColors(
                                 //containerColor = Color(0xFF076C94),
                                 contentColor = Color.Black

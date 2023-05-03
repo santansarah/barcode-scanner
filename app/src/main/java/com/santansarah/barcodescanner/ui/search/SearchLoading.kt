@@ -21,24 +21,36 @@ import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.paging.PagingData
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.santansarah.barcodescanner.domain.ErrorCode
 import com.santansarah.barcodescanner.ui.search.imageanimations.AnimatedSearchImages
 import com.santansarah.barcodescanner.ui.components.SearchTextField
 import com.santansarah.barcodescanner.ui.components.searchLoadingBrush
+import com.santansarah.barcodescanner.ui.previewparams.SearchParams
+import com.santansarah.barcodescanner.ui.previewparams.SearchResultsFeature
 import com.santansarah.barcodescanner.ui.search.imageanimations.AnimatedSearchImageRow
 import com.santansarah.barcodescanner.ui.search.imageanimations.LESearchImagesAnimations
 import com.santansarah.barcodescanner.ui.theme.BarcodeScannerTheme
 import com.santansarah.barcodescanner.ui.theme.brightYellow
 import com.santansarah.barcodescanner.ui.theme.darkBackground
 import com.santansarah.barcodescanner.ui.theme.redishMagenta
+import kotlinx.coroutines.flow.flowOf
 
+
+/**
+ * The search loading screen shows:
+ * 1. Animations, if everything is going well
+ * 2. The error message, if there's a problem with the API.
+ */
 @Composable
 fun SearchLoadingScreen(
     padding: PaddingValues,
     searchText: String,
-    error: String?,
+    initialLoadErrorMessage: String?,
     onSearchValueChanged: (String) -> Unit,
     onSearch: () -> Unit
 ) {
@@ -52,7 +64,7 @@ fun SearchLoadingScreen(
         verticalArrangement = Arrangement.Center,
     ) {
 
-        LESearchImagesAnimations()
+        LESearchImagesAnimations((initialLoadErrorMessage != null))
 
         ElevatedCard(
             modifier = Modifier
@@ -65,7 +77,11 @@ fun SearchLoadingScreen(
                     .background(brightYellow)
                     .fillMaxWidth()
             ) {
-                val header = error?.let{ "Try again" } ?: "Processing..."
+
+                /**
+                 * If there's an error, the header message is updated to 'Try again'.
+                 */
+                val header = initialLoadErrorMessage?.let{ "Try again" } ?: "Processing..."
                 Text(
                     modifier = Modifier
                         .padding(6.dp),
@@ -75,13 +91,20 @@ fun SearchLoadingScreen(
             }
             Divider(thickness = 2.dp, color = Color.DarkGray)
 
-            AnimatedSearchImageRow((error != null), AnimatedSearchImages.imageList.take(3))
+            /**
+             * The animated icons also need to know if there's an error. If there is, then the
+             * icons will do a color shift to black & white.
+             */
+            AnimatedSearchImageRow((initialLoadErrorMessage != null), AnimatedSearchImages.imageList.take(3))
 
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                if (error == null) {
+                /**
+                 * If there's no error, then here I show the Loading shimmer.
+                 */
+                if (initialLoadErrorMessage == null) {
                     SearchLoadingShimmerText()
                     Text(
                         modifier = Modifier
@@ -91,10 +114,14 @@ fun SearchLoadingScreen(
                         textAlign = TextAlign.Center
                     )
                 } else {
+                    /**
+                     * Otherwise, it displays the ENUM ErrorCode message that we got from the
+                     * PagingSource.
+                     */
                     Text(
                         modifier = Modifier
                             .padding(bottom = 14.dp),
-                        text = error,
+                        text = initialLoadErrorMessage,
                         style = TextStyle(
                             color = redishMagenta,
                             fontSize = 28.sp
@@ -112,7 +139,7 @@ fun SearchLoadingScreen(
 
             }
 
-            AnimatedSearchImageRow((error != null), AnimatedSearchImages.imageList.takeLast(3))
+            AnimatedSearchImageRow((initialLoadErrorMessage != null), AnimatedSearchImages.imageList.takeLast(3))
 
         }
 
@@ -135,49 +162,11 @@ fun SearchLoadingShimmerText() {
 
 }
 
-
+// See search screen for other previews.
 @Preview
 @Composable
 fun PreviewSearchLoadingShimmerText() {
     BarcodeScannerTheme {
         SearchLoadingShimmerText()
     }
-}
-
-@Preview
-@Composable
-fun PreviewSearchLoading() {
-
-    BarcodeScannerTheme {
-        Surface(
-            color = darkBackground
-        ) {
-            SearchLoadingScreen(
-                padding = PaddingValues(),
-                searchText = "keto bomb",
-                error = null,
-                {}, {}
-            )
-        }
-    }
-
-}
-
-@Preview
-@Composable
-fun PreviewSearchNotFound() {
-
-    BarcodeScannerTheme {
-        Surface(
-            color = darkBackground
-        ) {
-            SearchLoadingScreen(
-                padding = PaddingValues(),
-                searchText = "keto bomb",
-                error = ErrorCode.API_ERROR.message,
-                {}, {}
-            )
-        }
-    }
-
 }

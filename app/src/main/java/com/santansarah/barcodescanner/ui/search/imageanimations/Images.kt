@@ -40,7 +40,7 @@ object AnimatedSearchImages {
     )
 
     fun updateAnimatedSearchScale(imageId: Int, newScale: Float) {
-        Timber.d("newscale: $newScale")
+        //Timber.d("newscale: $newScale")
         imageList.find { it.imageId == imageId }?.currentScale?.value = newScale
     }
 

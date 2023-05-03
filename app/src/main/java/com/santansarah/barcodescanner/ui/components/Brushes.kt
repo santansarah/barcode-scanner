@@ -43,7 +43,8 @@ val redShimmer = listOf(
 )
 
 @Composable
-fun loadingBrush(fontSize: TextUnit): Brush {
+fun loadingBrush(fontSize: TextUnit,
+                 colors: List<Color>): Brush {
     val currentFontSizePx = with(LocalDensity.current) { fontSize.toPx() }
     val currentFontSizeDoublePx = currentFontSizePx * 2
 
@@ -60,7 +61,7 @@ fun loadingBrush(fontSize: TextUnit): Brush {
     )
 
     return Brush.linearGradient(
-        colors = darkGrayShimmer,
+        colors = colors,
         start = Offset(0f, offset),
         end = Offset(offset + currentFontSizePx, offset + currentFontSizePx),
         tileMode = TileMode.Mirror

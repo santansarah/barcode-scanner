@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.santansarah.barcodescanner.ui.components.darkGrayShimmer
 import com.santansarah.barcodescanner.ui.components.loadingBrush
 import com.santansarah.barcodescanner.ui.theme.BarcodeScannerTheme
 
@@ -49,7 +50,7 @@ fun PreviewLoadingText() {
                 .padding(6.dp),
             text = "Loading",
             style = TextStyle(
-                brush = loadingBrush(fontSize = 14.sp),
+                brush = loadingBrush(fontSize = 14.sp, darkGrayShimmer),
                 fontSize = 14.sp
             )
         )

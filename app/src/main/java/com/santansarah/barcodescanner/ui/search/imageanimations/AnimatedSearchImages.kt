@@ -24,24 +24,28 @@ import com.santansarah.barcodescanner.ui.theme.BarcodeScannerTheme
 import kotlinx.coroutines.delay
 
 @Composable
-fun LESearchImagesAnimations() {
-    LaunchedEffect(null) {
+fun LESearchImagesAnimations(
+    key: Boolean
+) {
+    LaunchedEffect(key) {
 
-        val animatedImages = AnimatedSearchImages
-            .imageList.sortedBy {
-                it.animateOrder
-            }
+        if (!key) {
+            val animatedImages = AnimatedSearchImages
+                .imageList.sortedBy {
+                    it.animateOrder
+                }
 
-        repeat(3) {
-            animatedImages.forEach { img ->
-                AnimatedSearchImages.scaleImage(
-                    onValueChanged = {
-                        AnimatedSearchImages.updateAnimatedSearchScale(
-                            img.imageId, it
-                        )
-                    }
-                )
-                delay(500)
+            repeat(3) {
+                animatedImages.forEach { img ->
+                    AnimatedSearchImages.scaleImage(
+                        onValueChanged = {
+                            AnimatedSearchImages.updateAnimatedSearchScale(
+                                img.imageId, it
+                            )
+                        }
+                    )
+                    delay(500)
+                }
             }
         }
 
@@ -106,7 +110,7 @@ fun PreviewLoadingImages() {
     BarcodeScannerTheme {
 
         Column {
-            LESearchImagesAnimations()
+            LESearchImagesAnimations(false)
             AnimatedSearchImageRow(false, AnimatedSearchImages.imageList.take(3))
             AnimatedSearchImageRow(false, AnimatedSearchImages.imageList.takeLast(3))
         }

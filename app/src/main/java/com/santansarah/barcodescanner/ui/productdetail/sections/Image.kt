@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.sp
 import com.santansarah.barcodescanner.data.remote.ItemListing
 import com.santansarah.barcodescanner.data.remote.Product
 import com.santansarah.barcodescanner.data.remote.mock.bakersChocolate
+import com.santansarah.barcodescanner.ui.components.darkGrayShimmer
 import com.santansarah.barcodescanner.ui.components.loadingBrush
 import com.santansarah.barcodescanner.ui.previewparams.ProductDetailParams
 import com.santansarah.barcodescanner.ui.previewparams.ProductDetails
@@ -70,7 +71,7 @@ fun ProductImage(
                             .padding(6.dp),
                         text = "Loading".uppercase(),
                         style = TextStyle(
-                            brush = loadingBrush(fontSize = 16.sp),
+                            brush = loadingBrush(fontSize = 16.sp, darkGrayShimmer),
                             fontSize = 16.sp,
                         ),
                         textAlign = TextAlign.Center
