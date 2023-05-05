@@ -1,6 +1,19 @@
 package com.santansarah.barcodescanner.data.remote.mock
 
-val searchResults = """{
+import com.santansarah.barcodescanner.data.paging.ProductSearchPagingSource
+import com.santansarah.barcodescanner.data.remote.SearchProductItem
+
+/**
+ * Here's a real JSON response that comes back for corn chips. The Api returns the:
+ * total product count, current page, page_count - which is how many products
+ * are ON this specific page, and then page_size - the max products that are
+ * returned per page. Then, I get a list of products, which are stored in
+ * [SearchProductItem]. For Paging 3, I use the metadata to determine my
+ * paging functionality, and the [SearchProductItem] as the LoadResult. Now,
+ * let's go back to [ProductSearchPagingSource] and see how all of this comes
+ * together.
+ */
+const val searchResults = """{
    "count":119,
    "page":1,
    "page_count":24,

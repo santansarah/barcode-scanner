@@ -46,6 +46,10 @@ class SearchViewModel @Inject constructor(
 
     var rememberListScrollState = Pair(0, 0)
 
+    /**
+     * Now, in my SearchViewModel, I set up a MutableStateFlow to store the flow from my
+     * repository.
+     */
     private val searchStringFromState = savedStateHandle[SEARCH_TEXT] ?: ""
     val searchResults = MutableStateFlow<PagingData<SearchProductItem>>(PagingData.empty())
     val searchText = MutableStateFlow(searchStringFromState)
@@ -62,6 +66,9 @@ class SearchViewModel @Inject constructor(
         getProducts(searchText.value)
     }
 
+    /**
+     * I set this StateFlow in my getProducts function, and cache it in the viewModelScope.
+     */
     private fun getProducts(searchText: String) {
         viewModelScope.launch {
             foodRepository.getSearchResults(searchText).cachedIn(viewModelScope).collect {

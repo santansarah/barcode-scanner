@@ -172,49 +172,50 @@ fun ShowSearchResults(
              * This composable loads if the initial fetch is complete, and there's no error. But
              * at this point, we still need to be aware of 3 different states.
              */
-                LazyColumn(
-                    state = rememberLazyListState(),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(padding),
-                    //.padding(top = 20.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
+            Timber.tag("paging3").d("Loading initial fetch...")
+            LazyColumn(
+                state = rememberLazyListState(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(padding),
+                //.padding(top = 20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
 
-                    /**
-                     * First, show the list of our 24 products from the API.
-                     */
-                    items(searchResults) { productInfo ->
-                        ProductSearchListItem(productInfo, onGotBarcode) {
-                            PlaceholderImage(
-                                description = productInfo?.productName ?: "Product Image"
-                            )
-                        }
+                /**
+                 * First, show the list of our 24 products from the API.
+                 */
+                items(searchResults) { productInfo ->
+                    ProductSearchListItem(productInfo, onGotBarcode) {
+                        PlaceholderImage(
+                            description = productInfo?.productName ?: "Product Image"
+                        )
                     }
-
-                    /**
-                     * At the end of the list, show a Loading shimmer if we need to load more.
-                     */
-                    if (searchResults.loadState.append is LoadState.Loading) {
-                        item {
-                            LoadMoreItem()
-                        }
-                    }
-
-                    /**
-                     * And finally, check to see if we got an error when requesting
-                     * additional pages. One really cool thing about Paging 3 is that if we did
-                     * get an error here, there's no need to start over at page 1 again. Here,
-                     * I use 'searchResults.retry()', to request the page that failed again. Let's
-                     * take a look at this composable real quick and see how it works.
-                     */
-                    appendErrorMessage?.let {
-                        item {
-                            PagingAppendErrorItem(appendErrorMessage) { searchResults.retry() }
-                        }
-                    }
-
                 }
+
+                /**
+                 * At the end of the list, show a Loading shimmer if we need to load more.
+                 */
+                if (searchResults.loadState.append is LoadState.Loading) {
+                    item {
+                        LoadMoreItem()
+                    }
+                }
+
+                /**
+                 * And finally, check to see if we got an error when requesting
+                 * additional pages. One really cool thing about Paging 3 is that if we did
+                 * get an error here, there's no need to start over at page 1 again. Here,
+                 * I use 'searchResults.retry()', to request the page that failed again. Let's
+                 * take a look at this composable real quick and see how it works.
+                 */
+                appendErrorMessage?.let {
+                    item {
+                        PagingAppendErrorItem(appendErrorMessage) { searchResults.retry() }
+                    }
+                }
+
+            }
         }
     }
 }
