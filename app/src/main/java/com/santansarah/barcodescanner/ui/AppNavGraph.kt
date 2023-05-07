@@ -25,7 +25,7 @@ fun AppNavGraph(
         composable(HOME) {
             HomeRoute(
                 onGotBarcode = { barcode ->
-                    navController.navigate("$PRODUCT_DETAIL_SCREEN/$barcode")
+                    navController.navigate("$PRODUCT_DETAIL_SCREEN/$HOME/$barcode")
                 },
                 onSearchClicked = { searchText ->
                     navController.navigate("$SEARCH_SCREEN/$searchText")
@@ -38,7 +38,7 @@ fun AppNavGraph(
         composable(SEARCH) {
             SearchRoute(onBackClicked = { navController.popBackStack() },
                 onGotBarcode = { barcode ->
-                    navController.navigate("$PRODUCT_DETAIL_SCREEN/$barcode")
+                    navController.navigate("$PRODUCT_DETAIL_SCREEN/$SEARCH/$barcode")
                 })
         }
     }

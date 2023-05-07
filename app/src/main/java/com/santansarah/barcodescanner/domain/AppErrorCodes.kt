@@ -17,6 +17,9 @@ import com.santansarah.barcodescanner.data.paging.ProductSearchPagingSource
 enum class ErrorCode(val message: String) {
     API_SEARCH_TIMEOUT("Your search is taking longer than expected. More specific keywords " +
             "might help."),
-    NETWORK_ERROR("Couldn't reach our food server; is your Internet connected?"),
-    API_ERROR("We had a problem getting your products. Try again.")
+    API_PRODUCT_TIMEOUT("It's taking longer than expected to get your product."),
+    NETWORK_ERROR("Couldn't complete this search; is your Internet connected?"),
+    NETWORK_PRODUCT_TIMEOUT("Couldn't get this product; is your Internet connected?"),
+    API_ERROR("There was a problem getting your products."),
+    NOT_FOUND("Can't find this product.")
 }

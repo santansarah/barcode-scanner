@@ -4,12 +4,18 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import com.santansarah.barcodescanner.data.remote.ItemListing
 import com.santansarah.barcodescanner.data.remote.Product
 import com.santansarah.barcodescanner.data.remote.mock.bakersChocolate
+import com.santansarah.barcodescanner.domain.ErrorCode
+import com.santansarah.barcodescanner.domain.models.AppDestinations.HOME
+import com.santansarah.barcodescanner.domain.models.AppDestinations.SEARCH
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
 data class ProductDetails(
     val product: Product?,
-    val isLoading: Boolean
+    val isLoading: Boolean,
+    val fromScreen: String,
+    val errorMessage: String?,
+    val barcode: String
 )
 
 val item = Json {
@@ -22,8 +28,11 @@ val item = Json {
 class ProductDetailParams : PreviewParameterProvider<ProductDetails> {
 
     override val values = sequenceOf(
-        ProductDetails(null, true),
-        ProductDetails(item.product, false),
-        ProductDetails(null, false),
+        ProductDetails(null, true, HOME, null, "0078742081304"),
+        ProductDetails(item.product, false, HOME, null, "0078742081304"),
+        ProductDetails(null, false, SEARCH, ErrorCode.API_PRODUCT_TIMEOUT.message, "0078742081304"),
+        ProductDetails(null, false, SEARCH, ErrorCode.NETWORK_ERROR.message, "0078742081304"),
+        ProductDetails(null, false, HOME, null, "0078742081304"),
+        ProductDetails(null, false, HOME, ErrorCode.NETWORK_ERROR.message, "0078742081304"),
     )
 }

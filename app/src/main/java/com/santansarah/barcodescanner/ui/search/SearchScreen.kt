@@ -172,7 +172,7 @@ fun ShowSearchResults(
              * This composable loads if the initial fetch is complete, and there's no error. But
              * at this point, we still need to be aware of 3 different states.
              */
-            Timber.tag("paging3").d("Loading initial fetch...")
+                Timber.tag("paging3").d("Loading initial fetch...")
             LazyColumn(
                 state = rememberLazyListState(),
                 modifier = Modifier

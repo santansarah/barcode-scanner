@@ -40,7 +40,7 @@ fun LoadMoreItem() {
             .fillMaxWidth(),
         shape = RectangleShape,
         colors = CardDefaults.elevatedCardColors(
-            containerColor = lightGray
+            containerColor = lightGray.copy(.5f)
         )
     ) {
         Text(
