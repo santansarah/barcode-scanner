@@ -106,14 +106,27 @@ fun ProductImage(
         ) {
             if (!isLoading && product == null) {
 
+                /**
+                 * If the product isn't loading and it's null, then I know I have a problem.
+                 * Now, it's time to figure out what to show the user. First, I set up the
+                 * barcode message.
+                 */
                 val barcodeMessage = "When you scan your barcode, make sure that " +
                         "it's flat, well lit, and matches $barcode. Tap to scan again."
 
+                /**
+                 * If the error message from the Api isn't null, then I include it.
+                 */
                 productError?.let {
                     ProductDetailError(errorMessage = "$it Tap to try again.",
                         onRetry = { onRetry(barcode) }
                     )
                 }
+
+                /**
+                 * If we got here from the HOME screen, this means that a user scanned
+                 * a barcode. If that's the case, show the barcode error message.
+                 */
                 if (fromScreen == HOME) {
                     Spacer(Modifier.height(12.dp))
                     ProductDetailError(errorMessage = barcodeMessage, onRetry = onRescan)
@@ -176,6 +189,10 @@ fun ProductDetailError(
 
 }
 
+/**
+ * With PreviewParameters, now, I can loop through each error scenario and see what it
+ * looks like.
+ */
 @Preview
 @Composable
 fun PreviewProductImageLoading(
@@ -191,3 +208,10 @@ fun PreviewProductImageLoading(
         )
     }
 }
+
+/**
+ * Handling errors gracefully and responsively is key to creating a great User Experience.
+ * A simple snack bar might work in some cases, but if you need more functionality, don't
+ * hesitate to go the extra mile - your users will appreciate it 😀!
+ * That's all I have for today, thanks for watching.
+ */

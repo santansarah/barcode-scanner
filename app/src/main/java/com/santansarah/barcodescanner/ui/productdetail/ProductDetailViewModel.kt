@@ -56,15 +56,35 @@ class ProductDetailViewModel @Inject constructor(
     private val foodRepository: FoodRepository
 ) : ViewModel() {
 
+    /**
+     * In my ProductDetailViewModel, first, I get the barcode as a StateFlow from the
+     * SavedStateHandle. This comes from either the search results, or from a barcode scan on the
+     * home page. If the product isn't found when a user scans a barcode from the Home
+     * screen, I'm also giving the users the option to scan it again. This means that I also
+     * need to track the barcode from my BarcodeScanner service, and that the barcode from the
+     * initial SavedStateHandle could change.
+     */
     private val _barcodeSentToDetails = savedStateHandle
         .getStateFlow(BARCODE, "000000000")
+
     private val _barcodeFromScanner = barcodeScanner.barCodeResults
         .filterNotNull()
 
+    /**
+     * Then, I use flattenMerge to get a single flow from both of my barcode flows. When the
+     * ViewModel loads, first, I'll get the barcode from the SavedStateHandle. After that, the flow
+     * returns barcodes that are emitted from my BarcodeScanner service. Using onEach, every time
+     * a barcode is read, the flow automatically initiates a call to the Api to get the
+     * product detail information. This way, I don't need to have an init function in my ViewModel.
+     */
     private val _barcodeToUse = flowOf(_barcodeSentToDetails, _barcodeFromScanner)
         .flattenMerge()
         .onEach { getProductDetail(it) }
 
+    /**
+     * For navigation arguments, I also get which screen called the Product Details composable.
+     * Here, it will be HOME or SEARCH. This is important for knowing which errors to show.
+     */
     val fromScreen: String = checkNotNull(savedStateHandle[FROM_SCREEN])
 
     private val _itemListing = MutableStateFlow<ItemListing?>(null)
@@ -90,8 +110,7 @@ class ProductDetailViewModel @Inject constructor(
         )
 
     /**
-     * getInfoByBarCode uses the same [ErrorCode] enum as my PagingSource class.
-     * Here, I just check to see if my ServiceResult wrapper returns an error.
+     * Here, I just check to see if my ServiceResult wrapper returns an ErrorCode.
      * If it does, I update productError, which is collected in my composable.
      */
     fun getProductDetail(barcode: String) {

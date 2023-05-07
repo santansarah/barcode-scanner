@@ -41,6 +41,11 @@ fun ProductDetailsRoute(
 
     val productDetailState = viewModel.productDetailState.collectAsStateWithLifecycle().value
 
+    /**
+     * Since I use flattenMerge and combine in my ViewModel, here, I can always be sure that
+     * my barcode is current, and that the product that's loaded in itemListing matches the
+     * barcode that came back from the flow.
+     */
     val barcode = productDetailState.barcode
     val itemListing = productDetailState.itemListing
     val isLoading = productDetailState.isLoading
@@ -87,6 +92,10 @@ fun ItemDetails(
                 .verticalScroll(rememberScrollState()),
         ) {
 
+            /**
+             * If the product error message isn't null, it's passed to my Product Image
+             * composable.
+             */
             ProductImage(product, isLoading, productError, fromScreen, code, onRetry, onRescan)
 
             Spacer(modifier = Modifier.height(20.dp))

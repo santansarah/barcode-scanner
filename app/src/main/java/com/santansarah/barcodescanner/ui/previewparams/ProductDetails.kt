@@ -28,11 +28,14 @@ val item = Json {
 class ProductDetailParams : PreviewParameterProvider<ProductDetails> {
 
     override val values = sequenceOf(
+        // successful states
         ProductDetails(null, true, HOME, null, "0078742081304"),
         ProductDetails(item.product, false, HOME, null, "0078742081304"),
+
+        // error states
         ProductDetails(null, false, SEARCH, ErrorCode.API_PRODUCT_TIMEOUT.message, "0078742081304"),
-        ProductDetails(null, false, SEARCH, ErrorCode.NETWORK_ERROR.message, "0078742081304"),
-        ProductDetails(null, false, HOME, null, "0078742081304"),
-        ProductDetails(null, false, HOME, ErrorCode.NETWORK_ERROR.message, "0078742081304"),
+        ProductDetails(null, false, SEARCH, ErrorCode.NETWORK_PRODUCT_TIMEOUT.message, "0078742081304"),
+        ProductDetails(null, false, HOME, ErrorCode.NOT_FOUND.message, "0078742081304"),
+        ProductDetails(null, false, HOME, ErrorCode.NETWORK_PRODUCT_TIMEOUT.message, "0078742081304"),
     )
 }

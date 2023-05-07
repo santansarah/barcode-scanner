@@ -256,8 +256,12 @@ fun PreviewSearchResultsLoading(
      * The fourth is a network error while fetching the next page,
      * and finally, a connection time out when fetching the next page.
      *
-     * Notice in the last two previews, we only get the error. But let's
-     * try interactive mode & see how it looks.
+     * Notice in the last two previews, we only get the error. But if
+     * I use interactive mode, then I can see exactly how this will
+     * look on the frontend.
+     *
+     * That covers error handling for the Search screen. Next, let's take
+     * a look at the Product Detail screen.
      */
 
 }

@@ -21,8 +21,11 @@ class FoodRepository @Inject constructor(
 ) {
 
     /**
-     * I'm don't check HTTP status codes for my search results yet, but
-     * here, it's important that I check for a 404 - Product not found.
+     * Again, I'll start with the data layer, and work my way up to the UI. To get the Product
+     * information, I send a request to the Api with the product's barcode in the path. I don't
+     * check for HTTP status codes in my search results yet, but here, it's important that I
+     * check for a 404 - Product not found. Besides that, the error handling is very similar to
+     * the search results handler.
      */
     suspend fun getInfoByBarCode(barCode: String): Flow<ServiceResult<ItemListing>> {
         return flow {
@@ -88,21 +91,6 @@ class FoodRepository @Inject constructor(
                 ProductSearchPagingSource(foodApi = api, searchText = searchText)
             }
         ).flow
-    }
-
-    suspend fun getSearchResults(searchText: String, page: Int): ServiceResult<SearchResults> {
-        return try {
-            val result = api.searchProducts(
-                searchText = searchText,
-                fields = SearchProductItem.fields.joinToString(","),
-                page = page
-            )
-            Timber.d(result.toString())
-            ServiceResult.Success(result)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            ServiceResult.Error(ErrorCode.API_ERROR)
-        }
     }
 
 }
