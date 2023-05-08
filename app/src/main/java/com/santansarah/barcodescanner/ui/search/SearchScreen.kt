@@ -111,11 +111,11 @@ fun ShowSearchResults(
 
         /**
          * There are 5 key states to consider here:
-         * 1. Is the initial fetch loading?
-         * 2. Does the initial fetch have an error?
-         * 3. Is the initial fetch complete?
-         * 4. Are we requesting the next page?
-         * 5. and finally, was there an error requesting the next page?
+         * 1. Is the first fetch loading?
+         * 2. Does the first fetch have an error?
+         * 3. Is the first fetch complete?
+         * 4. Are we getting the next page?
+         * 5. and finally, was there an error getting the next page?
          *
          * That's a lot to check, but really, in code, it's not so bad. What's also nice is that
          * since the searchResults are cached in the ViewModel, I don't have to worry to much
@@ -169,7 +169,7 @@ fun ShowSearchResults(
                 )
             else
             /**
-             * This composable loads if the initial fetch is complete, and there's no error. But
+             * The LazyColumn loads if the initial fetch is complete, and there's no error. But
              * at this point, we still need to be aware of 3 different states.
              */
                 Timber.tag("paging3").d("Loading initial fetch...")
@@ -183,7 +183,7 @@ fun ShowSearchResults(
             ) {
 
                 /**
-                 * First, show the list of our 24 products from the API.
+                 * If everything is going well, I show the list of our 24 products from the API.
                  */
                 items(searchResults) { productInfo ->
                     ProductSearchListItem(productInfo, onGotBarcode) {

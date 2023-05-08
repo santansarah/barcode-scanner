@@ -129,7 +129,7 @@ class ProductSearchPagingSource constructor(
         } catch (e: Exception) {
             Timber.d(e.toString())
             /**
-             * If my API call comes back with an error, check for
+             * If my API call comes back with an error, I check for
              * SocketTimeoutException if the search timed out,
              * IOException if something went wrong when we tried to connect to the server,
              * and finally, I trap all other errors, like HTTP error codes, in a more

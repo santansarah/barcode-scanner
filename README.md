@@ -20,3 +20,11 @@ responsive while it’s doing work in the background, animations can be an absol
 great User Experiences.
 
 [![Shimmers](https://img.youtube.com/vi/Kfwag68hMlk/0.jpg)](https://www.youtube.com/watch?v=Kfwag68hMlk)
+
+## Retrofit, Paging 3, and Jetpack Compose UX Error Handling
+
+Handling errors gracefully and responsively is key to creating a great User Experience. A simple 
+snack bar might work in some cases, but if you need more functionality, don't hesitate to go the 
+extra mile - your users will appreciate it.
+
+[![Paging 3 Errors](https://img.youtube.com/vi/Zabam8Hy9oE/0.jpg)](https://www.youtube.com/watch?v=Zabam8Hy9oE)

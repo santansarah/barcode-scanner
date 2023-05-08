@@ -190,7 +190,7 @@ fun ProductDetailError(
 }
 
 /**
- * With PreviewParameters, now, I can loop through each error scenario and see what it
+ * With PreviewParameters, I can loop through each error scenario and see what it
  * looks like.
  */
 @Preview
