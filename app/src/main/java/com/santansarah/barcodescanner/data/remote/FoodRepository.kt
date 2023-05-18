@@ -93,4 +93,25 @@ class FoodRepository @Inject constructor(
         ).flow
     }
 
+    suspend fun getSimilarItems(barcodes: List<String>): Flow<List<SimilarItemListing>> {
+
+        val similarProducts: MutableList<SimilarItemListing> = mutableListOf()
+
+        return flow {
+            barcodes.forEach { code ->
+                try {
+                    val result = api.getSimilarProductByBarCode(
+                        barCode = code,
+                        fields = Product.fields.joinToString(",")
+                    )
+                    Timber.d("from getInfoByBarCode: $result")
+
+                    similarProducts.add(result)
+                    emit(similarProducts.toList())
+                } catch (e: Exception) {
+                    emit(similarProducts.toList())
+                }
+            }
+        }
+    }
 }

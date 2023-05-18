@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.kapt)
     alias(libs.plugins.hilt)
     alias(libs.plugins.kotlinxSerialization)
+    alias(libs.plugins.gps)
 }
 
 android {
@@ -83,6 +84,11 @@ dependencies {
     implementation(libs.pagingRuntime)
 
     implementation(libs.bundles.ktor)
+
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebaseMl)
+    implementation(libs.tensorflowLite)
+    implementation(libs.tensorflowSupport)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)

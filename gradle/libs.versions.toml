@@ -23,6 +23,10 @@ httpLogging = "4.9.3"
 paging = "3.1.1"
 composePaging = "1.0.0-alpha18"
 ktor = "2.3.0"
+gps = "4.3.15"
+firebaseBom = "32.0.0"
+tensorflowLite = "2.3.0"
+tensorflowSupport = "0.4.3"
 
 [libraries]
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
@@ -62,6 +66,15 @@ ktorContentNegotiation = {module="io.ktor:ktor-client-content-negotiation", vers
 ktorJson = {module = "io.ktor:ktor-serialization-kotlinx-json", version.ref="ktor"}
 ktorLogging = {module="io.ktor:ktor-client-logging", version.ref="ktor"}
 gson = {module="com.squareup.retrofit2:converter-gson", version.ref="retrofit"}
+# firebase-gradle = { module = 'com.google.firebase:firebase-crashlytics-gradle', version = '2.8.1' }
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
+# firebase-analytics = { module = 'com.google.firebase:firebase-analytics-ktx' }
+# firebase-crashlytics = { module = 'com.google.firebase:firebase-crashlytics-ktx' }
+# firebase-auth = { module = 'com.google.firebase:firebase-auth-ktx' }
+# firebase-database = { module = 'com.google.firebase:firebase-database-ktx' }
+firebaseMl = {module = "com.google.firebase:firebase-ml-modeldownloader-ktx"}
+tensorflowLite = {module = "org.tensorflow:tensorflow-lite", version.ref="tensorflowLite"}
+tensorflowSupport = {module="org.tensorflow:tensorflow-lite-support", version.ref="tensorflowSupport"}
 
 [plugins]
 com-android-application = { id = "com.android.application", version.ref = "com-android-application" }
@@ -69,6 +82,7 @@ org-jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.re
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "daggerHilt" }
 kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "org-jetbrains-kotlin-android" }
 kotlinxSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlinxSerialization" }
+gps = { id = "com.google.gms.google-services", version.ref = "gps" }
 
 [bundles]
 ktor = [

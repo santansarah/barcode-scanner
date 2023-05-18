@@ -26,6 +26,12 @@ interface FoodApi {
         @Path("barCode") barCode: String,
         @Query("fields") fields: String): ItemListing
 
+    @GET("product/{barCode}")
+    suspend fun getSimilarProductByBarCode(
+        @Header("Authorization") authorization: String = basic,
+        @Path("barCode") barCode: String,
+        @Query("fields") fields: String): SimilarItemListing
+
     //https://world.openfoodfacts.org/cgi/search.pl?search_terms=great+value+chips&search_simple=1
     // &action=process&json=true&fields=brand_owner,product_name,image_front_small_url
     @GET("https://us.openfoodfacts.org/cgi/search.pl?json=true")

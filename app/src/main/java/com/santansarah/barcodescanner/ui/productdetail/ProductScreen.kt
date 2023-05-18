@@ -22,12 +22,14 @@ import com.santansarah.barcodescanner.data.remote.ItemListing
 import com.santansarah.barcodescanner.data.remote.Product
 import com.santansarah.barcodescanner.data.remote.mock.bakersChocolate
 import com.santansarah.barcodescanner.data.remote.mock.notfound
+import com.santansarah.barcodescanner.data.remote.mock.similarProducts
 import com.santansarah.barcodescanner.domain.models.AppDestinations.HOME
 import com.santansarah.barcodescanner.domain.models.AppDestinations.SEARCH
 import com.santansarah.barcodescanner.ui.components.MainAppBar
 import com.santansarah.barcodescanner.ui.productdetail.sections.NutritionData
 import com.santansarah.barcodescanner.ui.productdetail.sections.ProductImage
 import com.santansarah.barcodescanner.ui.productdetail.sections.ProductIngredients
+import com.santansarah.barcodescanner.ui.productdetail.sections.SimilarProducts
 import com.santansarah.barcodescanner.ui.theme.BarcodeScannerTheme
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -105,7 +107,12 @@ fun ItemDetails(
             Spacer(modifier = Modifier.height(20.dp))
 
             NutritionData(product, isLoading)
-            Divider(thickness = 2.dp, color = Color.DarkGray)
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            SimilarProducts(similarProducts)
+
+            Spacer(modifier = Modifier.height(20.dp))
         }
     }
 }

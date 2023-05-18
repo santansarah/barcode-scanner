@@ -87,3 +87,4 @@ lint/tmp/
 .idea
 /.idea
 /.idea/misc.xml
+/app/google-services.json

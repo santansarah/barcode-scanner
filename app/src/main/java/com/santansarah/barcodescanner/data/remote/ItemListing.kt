@@ -10,3 +10,11 @@ data class ItemListing(
     val status: Int,
     @SerialName("status_verbose") val statusVerbose: String
 )
+
+@Serializable
+data class SimilarItemListing(
+    val code: String,
+    val product: SimilarProduct? = null,
+    val status: Int,
+    @SerialName("status_verbose") val statusVerbose: String
+)
