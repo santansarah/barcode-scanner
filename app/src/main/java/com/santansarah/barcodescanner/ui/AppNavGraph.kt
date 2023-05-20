@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import com.santansarah.barcodescanner.domain.models.AppDestinations.HOME
 import com.santansarah.barcodescanner.domain.models.AppDestinations.PRODUCT_DETAIL
 import com.santansarah.barcodescanner.domain.models.AppDestinations.SEARCH
+import com.santansarah.barcodescanner.domain.models.AppRoutes.HOME_SCREEN
 import com.santansarah.barcodescanner.domain.models.AppRoutes.PRODUCT_DETAIL_SCREEN
 import com.santansarah.barcodescanner.domain.models.AppRoutes.SEARCH_SCREEN
 import com.santansarah.barcodescanner.ui.productdetail.ProductDetailsRoute
@@ -25,7 +26,7 @@ fun AppNavGraph(
         composable(HOME) {
             HomeRoute(
                 onGotBarcode = { barcode ->
-                    navController.navigate("$PRODUCT_DETAIL_SCREEN/$HOME/$barcode")
+                    navController.navigate("$PRODUCT_DETAIL_SCREEN/$HOME_SCREEN/$barcode")
                 },
                 onSearchClicked = { searchText ->
                     navController.navigate("$SEARCH_SCREEN/$searchText")
@@ -38,7 +39,7 @@ fun AppNavGraph(
         composable(SEARCH) {
             SearchRoute(onBackClicked = { navController.popBackStack() },
                 onGotBarcode = { barcode ->
-                    navController.navigate("$PRODUCT_DETAIL_SCREEN/$SEARCH/$barcode")
+                    navController.navigate("$PRODUCT_DETAIL_SCREEN/$SEARCH_SCREEN/$barcode")
                 })
         }
     }
