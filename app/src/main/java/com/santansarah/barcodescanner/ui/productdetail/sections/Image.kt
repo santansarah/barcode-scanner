@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.sp
 import com.santansarah.barcodescanner.data.remote.Product
 import com.santansarah.barcodescanner.domain.models.AppDestinations.HOME
 import com.santansarah.barcodescanner.domain.models.AppDestinations.SEARCH
+import com.santansarah.barcodescanner.domain.models.AppRoutes
 import com.santansarah.barcodescanner.ui.components.darkGrayShimmer
 import com.santansarah.barcodescanner.ui.components.loadingBrush
 import com.santansarah.barcodescanner.ui.previewparams.ProductDetailParams
@@ -127,7 +128,7 @@ fun ProductImage(
                  * If we got here from the HOME screen, this means that a user scanned
                  * a barcode. If that's the case, show the barcode error message.
                  */
-                if (fromScreen == HOME) {
+                if (fromScreen == AppRoutes.HOME_SCREEN) {
                     Spacer(Modifier.height(12.dp))
                     ProductDetailError(errorMessage = barcodeMessage, onRetry = onRescan)
                 }

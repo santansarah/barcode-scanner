@@ -8,6 +8,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.santansarah.barcodescanner.BarcodeScanner
+import com.santansarah.barcodescanner.RecommendationService
 import com.santansarah.barcodescanner.data.remote.FoodApi
 import com.santansarah.barcodescanner.data.remote.FoodRepository
 import com.santansarah.barcodescanner.domain.OFFAPI
@@ -23,6 +24,7 @@ import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
@@ -48,10 +50,12 @@ object AppModules {
     fun provideIoDispatcher() = Dispatchers.IO
 
     @Provides
+    @Singleton
     fun provideBarcodeScanner(@ApplicationContext appContext: Context)
     = BarcodeScanner(appContext)
 
     @Provides
+    @Singleton
     fun provideKtorClient() = HttpClient(Android) {
         engine {
             connectTimeout = 3000
@@ -76,6 +80,7 @@ object AppModules {
 
     @OptIn(ExperimentalSerializationApi::class)
     @Provides
+    @Singleton
     fun provideRetrofit(): FoodApi {
         val contentType: MediaType = "application/json".toMediaType()
         val jsonBuilder = Json {
@@ -104,6 +109,7 @@ object AppModules {
     }
 
     @Provides
+    @Singleton
     fun provideImageLoader(@ApplicationContext context: Context): ImageLoader =
         ImageLoader.Builder(context)
             .crossfade(true)
@@ -121,9 +127,15 @@ object AppModules {
             .build()
 
     @Provides
+    @Singleton
     fun provideFoodRepository(foodApi: FoodApi) =
         FoodRepository(foodApi)
 
+    @Provides
+    @Singleton
+    fun provideRecommendationService(foodRepository: FoodRepository,
+                                     @IoDispatcher dispatcher: CoroutineDispatcher) =
+        RecommendationService(foodRepository, dispatcher)
 }
 
 @Retention(AnnotationRetention.RUNTIME)

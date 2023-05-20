@@ -2,6 +2,7 @@ package com.santansarah.barcodescanner.ui.productdetail.sections
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -35,7 +36,8 @@ import com.santansarah.barcodescanner.ui.theme.darkBackground
 
 @Composable
 fun SimilarProducts(
-    similarProducts: List<SimilarItemListing>
+    similarProducts: List<SimilarItemListing>,
+    onGotBarcode: (String) -> Unit
 ) {
 
     Divider(thickness = 2.dp, color = Color.DarkGray)
@@ -71,7 +73,7 @@ fun SimilarProducts(
                 SimilarProductListItem(
                     productInfo = itemListing.product,
                     barcode = itemListing.code,
-                    onGotBarcode = {}
+                    onGotBarcode = onGotBarcode
                 ) {
                     PlaceholderImage(
                         description = itemListing.product?.productName ?: "Product Image"
@@ -95,7 +97,7 @@ fun PreviewSimilarProducts() {
             color = darkBackground
         ) {
             Column {
-                SimilarProducts(similarProducts = similarProducts)
+                SimilarProducts(similarProducts = similarProducts, onGotBarcode = {})
             }
         }
     }

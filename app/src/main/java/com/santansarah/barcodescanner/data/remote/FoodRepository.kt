@@ -3,6 +3,7 @@ package com.santansarah.barcodescanner.data.remote
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import com.santansarah.barcodescanner.RecommendationService
 import com.santansarah.barcodescanner.data.paging.ProductSearchPagingSource
 import com.santansarah.barcodescanner.domain.ErrorCode
 import com.santansarah.barcodescanner.utils.ServiceResult
@@ -93,20 +94,20 @@ class FoodRepository @Inject constructor(
         ).flow
     }
 
-    suspend fun getSimilarItems(barcodes: List<String>): Flow<List<SimilarItemListing>> {
+    suspend fun getSimilarItems(barcodes: List<String?>): Flow<List<SimilarItemListing>> {
 
         val similarProducts: MutableList<SimilarItemListing> = mutableListOf()
 
         return flow {
-            barcodes.forEach { code ->
+            barcodes.filterNotNull().forEach { code ->
+                Timber.d("getting $code")
                 try {
                     val result = api.getSimilarProductByBarCode(
                         barCode = code,
-                        fields = Product.fields.joinToString(",")
+                        fields = SimilarProduct.fields.joinToString(",")
                     )
-                    Timber.d("from getInfoByBarCode: $result")
-
                     similarProducts.add(result)
+                    Timber.d("similar product list: $similarProducts")
                     emit(similarProducts.toList())
                 } catch (e: Exception) {
                     emit(similarProducts.toList())

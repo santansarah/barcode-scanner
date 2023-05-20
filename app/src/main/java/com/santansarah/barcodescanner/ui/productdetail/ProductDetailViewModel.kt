@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.santansarah.barcodescanner.BarcodeScanner
+import com.santansarah.barcodescanner.RecommendationService
 import com.santansarah.barcodescanner.data.remote.FoodRepository
 import com.santansarah.barcodescanner.data.remote.ItemListing
 import com.santansarah.barcodescanner.di.IoDispatcher
@@ -53,7 +54,8 @@ class ProductDetailViewModel @Inject constructor(
     private val barcodeScanner: BarcodeScanner,
     @IoDispatcher val dispatcher: CoroutineDispatcher,
     savedStateHandle: SavedStateHandle,
-    private val foodRepository: FoodRepository
+    private val foodRepository: FoodRepository,
+    private val recommendationService: RecommendationService
 ) : ViewModel() {
 
     /**
@@ -91,6 +93,8 @@ class ProductDetailViewModel @Inject constructor(
     private val _isLoading = MutableStateFlow(true)
     private val _productError = MutableStateFlow<String?>(null)
 
+    val similiarItems = recommendationService.similarItemsList
+
     val productDetailState = combine(
         _itemListing, _isLoading, _productError, _barcodeToUse
     ) { itemListing, isLoading, productError, barcodeToUse ->
@@ -125,11 +129,34 @@ class ProductDetailViewModel @Inject constructor(
                     is ServiceResult.Success -> {
                         _isLoading.value = false
                         _itemListing.value = it.data
+
+                        getSimilarProducts(it.data)
                     }
 
                     is ServiceResult.Error -> {
                         _productError.value = it.error.message
                         _isLoading.value = false
+                    }
+                }
+            }
+        }
+    }
+
+    private fun getSimilarProducts(itemListing: ItemListing) {
+        Timber.d("getting similar products...")
+        Timber.d("recid: $recommendationService")
+        viewModelScope.launch(dispatcher) {
+            itemListing.product?.let { product ->
+                with(product) {
+                    if (nutriments.fat != null
+                        && nutriments.carbohydrates != null
+                    ) {
+                        Timber.d("calling recommend...")
+                        recommendationService.recommend(
+                            itemListing.code,
+                            nutriments.fat.asDouble,
+                            nutriments.carbohydrates.asDouble
+                        )
                     }
                 }
             }

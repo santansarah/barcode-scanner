@@ -4,91 +4,88 @@ import com.google.firebase.ml.modeldownloader.CustomModelDownloadConditions
 import com.google.firebase.ml.modeldownloader.DownloadType
 import com.google.firebase.ml.modeldownloader.FirebaseModelDownloader
 import com.santansarah.barcodescanner.data.remote.FoodRepository
-import com.santansarah.barcodescanner.data.remote.ItemListing
+import com.santansarah.barcodescanner.data.remote.SimilarItemListing
+import com.santansarah.barcodescanner.di.IoDispatcher
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.withContext
 import org.tensorflow.lite.Interpreter
 import timber.log.Timber
 
 
 /** Interface to load TfLite model and provide recommendations.  */
 class RecommendationService(
-    val foodRepository: FoodRepository
+    private val foodRepository: FoodRepository,
+    @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) {
-    private val barcodes: MutableMap<Int, ItemListing> = HashMap()
     private var tflite: Interpreter? = null
-
-    /** An immutable result returned by a RecommendationClient.  */
-    data class Result(
-        val barcode: String
-    )
-
-    /** Load recommendation candidate list.  */
-    private suspend fun loadBarcodeList() {
-        // TODO: Replace this function with code from the codelab to load a list of recommendation
-        // candidates.
-    }
+    val similarItemsList = MutableStateFlow<List<SimilarItemListing>>(emptyList())
 
     /** Free up resources as the client is no longer needed.  */
     fun unload() {
         tflite?.close()
-        barcodes.clear()
     }
 
+    suspend fun recommend(currentProductCode: String, fat: Double, carbs: Double) {
 
-    fun recommend(currentProductCode: String, fat: Double, carbs: Double): List<Result> {
+        val inputs = Array(1) {arrayOf(getDietType(fat, carbs))}
+        Timber.d("diet type: ${inputs[0][0]}")
 
-        val inputs = arrayOf<Any>(getDietType(fat, carbs))
-
-        val recScore = Array(1) { FloatArray(10) }
-        val barcodes = Array(1) { LongArray(10)}
+        // The key here is to create an Array<of type> vs a single FloatArray(10). My output is
+        // (1,10), and the Tensorflow API sees the difference. We need to have one row of 10,
+        // vs a single array of 10. So when we access the output, we'll call barcodes[0][i]
+        // instead of barcodes[0].
+        val score = Array(1) { FloatArray(10) }
+        val barcodes = Array(1) { arrayOfNulls<String>(10) }
         val outputMap: MutableMap<Int, Any> = HashMap()
 
-        outputMap[0] = recScore
+        outputMap[0] = score
         outputMap[1] = barcodes
 
-        tflite?.let {
-            it.runForMultipleInputsOutputs(inputs, outputMap)
+        tflite?.let { interpreter ->
+            interpreter.runForMultipleInputsOutputs(inputs, outputMap)
 
-            val results = ArrayList<Result>()
+            Timber.d("got outputs from model...")
 
-            // Add recommendation results. Filter null or contained items.
-            for (code in barcodes[0]) {
-                if (currentProductCode != code.toString()) {
-                    val result = Result(
-                        code.toString()
-                    )
-                    results.add(result)
-                }
+            val barcodesListAsString =
+                barcodes[0].toList().filter { it != currentProductCode }
+
+            // https://github.com/tensorflow/tensorflow/issues/25170
+            Timber.d(barcodesListAsString.toString())
+
+            foodRepository.getSimilarItems(barcodesListAsString).collect {
+                similarItemsList.value = it
             }
-            Timber.d(results.toString())
-            return results
-        } ?: run {
-            Timber.d("No tflite interpreter loaded")
-            return emptyList()
+
+        } ?: Timber.d("No model loaded...")
+    }
+
+    suspend fun downloadModel() {
+        withContext(dispatcher) {
+            val conditions = CustomModelDownloadConditions.Builder()
+                .requireWifi()
+                .build()
+
+            FirebaseModelDownloader.getInstance()
+                .getModel("Product-Recs", DownloadType.LATEST_MODEL, conditions)
+                .addOnCompleteListener {
+                    if (!it.isSuccessful) {
+                        Timber.d("Failed to get model file.")
+                    } else {
+                        Timber.d("model file set...")
+                        tflite = Interpreter(it.result.file!!)
+                    }
+                }
+                .addOnFailureListener {
+                    Timber.d("Failed to get model file.")
+                }
         }
     }
 
-    fun downloadModel() {
-        val conditions = CustomModelDownloadConditions.Builder()
-            .requireWifi()
-            .build()
-
-        FirebaseModelDownloader.getInstance()
-            .getModel("Product-Recs", DownloadType.LOCAL_MODEL, conditions)
-            .addOnCompleteListener {
-                if (!it.isSuccessful) {
-                    Timber.d("Failed to get model file.")
-                } else {
-                    tflite = Interpreter(it.result.file!!)
-                    Timber.d("set tflite file...")
-                    recommend("78742248271", 15.0, 2.0)
-                }
-            }
-            .addOnFailureListener {
-                Timber.d("Failed to get model file.")
-            }
-    }
-
-    fun getDietType(fat: Double, carbs: Double): String {
+    private fun getDietType(fat: Double, carbs: Double): String {
 
         return when {
             carbs >= 30 -> "high_carb"

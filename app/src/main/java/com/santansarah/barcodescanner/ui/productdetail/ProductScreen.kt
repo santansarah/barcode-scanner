@@ -20,6 +20,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.mlkit.common.MlKitException.ErrorCode
 import com.santansarah.barcodescanner.data.remote.ItemListing
 import com.santansarah.barcodescanner.data.remote.Product
+import com.santansarah.barcodescanner.data.remote.SimilarItemListing
 import com.santansarah.barcodescanner.data.remote.mock.bakersChocolate
 import com.santansarah.barcodescanner.data.remote.mock.notfound
 import com.santansarah.barcodescanner.data.remote.mock.similarProducts
@@ -38,11 +39,12 @@ import timber.log.Timber
 @Composable
 fun ProductDetailsRoute(
     viewModel: ProductDetailViewModel = hiltViewModel(),
-    onBackClicked: () -> Unit
+    onBackClicked: () -> Unit,
+    onGotBarcode: (String) -> Unit
 ) {
 
     val productDetailState = viewModel.productDetailState.collectAsStateWithLifecycle().value
-
+    val similarItems = viewModel.similiarItems.collectAsStateWithLifecycle().value
     /**
      * Since I use flattenMerge and combine in my ViewModel, here, I can always be sure that
      * my barcode is current, and that the product that's loaded in itemListing matches the
@@ -61,7 +63,9 @@ fun ProductDetailsRoute(
         productError = productError,
         fromScreen = viewModel.fromScreen,
         onRetry = viewModel::getProductDetail,
-        onRescan = viewModel::scanBarcode
+        onRescan = viewModel::scanBarcode,
+        similarItemListing = similarItems,
+        onGotBarcode = onGotBarcode
     )
 
 }
@@ -76,7 +80,9 @@ fun ItemDetails(
     productError: String?,
     fromScreen: String,
     onRetry: (String) -> Unit,
-    onRescan: () -> Unit
+    onRescan: () -> Unit,
+    similarItemListing: List<SimilarItemListing>,
+    onGotBarcode: (String) -> Unit
 ) {
 
     Scaffold(
@@ -110,9 +116,10 @@ fun ItemDetails(
 
             Spacer(modifier = Modifier.height(20.dp))
 
-            SimilarProducts(similarProducts)
-
-            Spacer(modifier = Modifier.height(20.dp))
+            if (similarItemListing.isNotEmpty()) {
+                SimilarProducts(similarItemListing, onGotBarcode)
+                Spacer(modifier = Modifier.height(20.dp))
+            }
         }
     }
 }
@@ -138,7 +145,9 @@ fun PreviewItemDetails() {
             isLoading = false,
             product = placeHolderImage.product,
             onBackClicked = {}, code = item.code, productError = null, fromScreen = HOME,
-            onRetry = {}, onRescan = {}
+            onRetry = {}, onRescan = {},
+            similarItemListing = similarProducts,
+            onGotBarcode = {}
         )
     }
 
@@ -158,7 +167,9 @@ fun PreviewNotFound() {
             isLoading = false,
             product = item.product,
             onBackClicked = {}, code = item.code, productError = null,
-            fromScreen = SEARCH, onRetry = {}, onRescan = {}
+            fromScreen = SEARCH, onRetry = {}, onRescan = {},
+            similarItemListing = similarProducts,
+            onGotBarcode = {}
         )
     }
 
@@ -179,7 +190,9 @@ fun PreviewApiError() {
             product = item.product,
             onBackClicked = {}, code = item.code,
             productError = com.santansarah.barcodescanner.domain.ErrorCode.API_PRODUCT_TIMEOUT.message,
-            fromScreen = SEARCH, onRetry = {}, onRescan = {}
+            fromScreen = SEARCH, onRetry = {}, onRescan = {},
+            similarItemListing = similarProducts,
+            onGotBarcode = {}
         )
     }
 
