@@ -31,8 +31,9 @@ class RecommendationService(
 
     suspend fun recommend(currentProductCode: String, fat: Double, carbs: Double) {
 
-        val inputs = Array(1) {arrayOf(getDietType(fat, carbs))}
-        Timber.d("diet type: ${inputs[0][0]}")
+        val inputs = arrayOf(getDietType(fat, carbs))
+        //val inputs = Array(1) {IntArray(1)}
+        Timber.d("diet type: ${inputs[0]}")
 
         // The key here is to create an Array<of type> vs a single FloatArray(10). My output is
         // (1,10), and the Tensorflow API sees the difference. We need to have one row of 10,
@@ -85,15 +86,23 @@ class RecommendationService(
         }
     }
 
-    private fun getDietType(fat: Double, carbs: Double): String {
+    private fun getDietType(fat: Double, carbs: Double): Int {
 
         return when {
+            carbs >= 30 -> 1
+            fat >= 5 && carbs <= 12 -> 2
+            fat <= 1 && carbs <= 1 -> 3
+            fat <= 3 -> 4
+            else -> 5
+        }
+
+        /*return when {
             carbs >= 30 -> "high_carb"
             fat >= 5 && carbs <= 12 -> "keto"
             fat <= 1 && carbs <= 1 -> "free_food"
             fat <= 3 -> "low_fat"
             else -> "standard"
-        }
+        }*/
 
     }
 

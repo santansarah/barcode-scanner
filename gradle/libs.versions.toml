@@ -25,8 +25,9 @@ composePaging = "1.0.0-alpha18"
 ktor = "2.3.0"
 gps = "4.3.15"
 firebaseBom = "32.0.0"
-tensorflowLite = "2.3.0"
+tensorflowLite = "2.9.0"
 tensorflowSupport = "0.4.3"
+tensorflowOps = "0.0.0-nightly-SNAPSHOT"
 
 [libraries]
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
@@ -75,6 +76,7 @@ firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "fir
 firebaseMl = {module = "com.google.firebase:firebase-ml-modeldownloader-ktx"}
 tensorflowLite = {module = "org.tensorflow:tensorflow-lite", version.ref="tensorflowLite"}
 tensorflowSupport = {module="org.tensorflow:tensorflow-lite-support", version.ref="tensorflowSupport"}
+tensorflowOps = {module="org.tensorflow:tensorflow-lite-select-tf-ops", version.ref="tensorflowOps"}
 
 [plugins]
 com-android-application = { id = "com.android.application", version.ref = "com-android-application" }
