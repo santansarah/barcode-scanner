@@ -7,10 +7,8 @@ import com.santansarah.barcodescanner.data.remote.FoodRepository
 import com.santansarah.barcodescanner.data.remote.SimilarItemListing
 import com.santansarah.barcodescanner.di.IoDispatcher
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import org.tensorflow.lite.Interpreter
 import timber.log.Timber
@@ -22,7 +20,8 @@ class RecommendationService(
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) {
     private var tflite: Interpreter? = null
-    val similarItemsList = MutableStateFlow<List<SimilarItemListing>>(emptyList())
+    val similarItemsList =
+        MutableStateFlow<List<SimilarItemListing>>(emptyList())
 
     /** Free up resources as the client is no longer needed.  */
     fun unload() {
@@ -31,14 +30,12 @@ class RecommendationService(
 
     suspend fun recommend(currentProductCode: String, fat: Double, carbs: Double) {
 
-        val inputs = arrayOf(getDietType(fat, carbs))
-        //val inputs = Array(1) {IntArray(1)}
-        Timber.d("diet type: ${inputs[0]}")
+        val dietType = longArrayOf(getDietType(fat, carbs))
+        val fatValue = longArrayOf(fat.toLong())
+        val carbsValue = longArrayOf(carbs.toLong())
+        val barcode = arrayOf(currentProductCode)
+        val inputs = arrayOf(dietType, fatValue, carbsValue, barcode)
 
-        // The key here is to create an Array<of type> vs a single FloatArray(10). My output is
-        // (1,10), and the Tensorflow API sees the difference. We need to have one row of 10,
-        // vs a single array of 10. So when we access the output, we'll call barcodes[0][i]
-        // instead of barcodes[0].
         val score = Array(1) { FloatArray(10) }
         val barcodes = Array(1) { arrayOfNulls<String>(10) }
         val outputMap: MutableMap<Int, Any> = HashMap()
@@ -51,10 +48,11 @@ class RecommendationService(
 
             Timber.d("got outputs from model...")
 
-            val barcodesListAsString =
-                barcodes[0].toList().filter { it != currentProductCode }
+            val barcodesListAsString = barcodes[0]
+                    .toList()
+                    .filter { it != currentProductCode }
+                    .take(5)
 
-            // https://github.com/tensorflow/tensorflow/issues/25170
             Timber.d(barcodesListAsString.toString())
 
             foodRepository.getSimilarItems(barcodesListAsString).collect {
@@ -70,23 +68,19 @@ class RecommendationService(
                 .requireWifi()
                 .build()
 
-            FirebaseModelDownloader.getInstance()
-                .getModel("Product-Recs", DownloadType.LATEST_MODEL, conditions)
-                .addOnCompleteListener {
-                    if (!it.isSuccessful) {
-                        Timber.d("Failed to get model file.")
-                    } else {
-                        Timber.d("model file set...")
-                        tflite = Interpreter(it.result.file!!)
-                    }
-                }
-                .addOnFailureListener {
-                    Timber.d("Failed to get model file.")
-                }
+            try {
+                val firebaseModelDownloader = FirebaseModelDownloader.getInstance()
+                val model = firebaseModelDownloader
+                    .getModel("Product-Recs", DownloadType.LATEST_MODEL, conditions).await()
+                Timber.d("model file set...")
+                tflite = Interpreter(model.file!!)
+            } catch (e: Exception) {
+                Timber.d("Failed to get model file.")
+            }
         }
     }
 
-    private fun getDietType(fat: Double, carbs: Double): Int {
+    private fun getDietType(fat: Double, carbs: Double): Long {
 
         return when {
             carbs >= 30 -> 1

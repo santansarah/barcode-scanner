@@ -56,7 +56,7 @@ fun SimilarProducts(
             Text(
                 modifier = Modifier
                     .padding(6.dp),
-                text = "Similar Products",
+                text = "You might also like:",
                 style = MaterialTheme.typography.titleLarge
             )
         }

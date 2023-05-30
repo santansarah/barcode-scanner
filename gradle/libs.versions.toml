@@ -67,12 +67,10 @@ ktorContentNegotiation = {module="io.ktor:ktor-client-content-negotiation", vers
 ktorJson = {module = "io.ktor:ktor-serialization-kotlinx-json", version.ref="ktor"}
 ktorLogging = {module="io.ktor:ktor-client-logging", version.ref="ktor"}
 gson = {module="com.squareup.retrofit2:converter-gson", version.ref="retrofit"}
-# firebase-gradle = { module = 'com.google.firebase:firebase-crashlytics-gradle', version = '2.8.1' }
+
+
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
-# firebase-analytics = { module = 'com.google.firebase:firebase-analytics-ktx' }
-# firebase-crashlytics = { module = 'com.google.firebase:firebase-crashlytics-ktx' }
-# firebase-auth = { module = 'com.google.firebase:firebase-auth-ktx' }
-# firebase-database = { module = 'com.google.firebase:firebase-database-ktx' }
+
 firebaseMl = {module = "com.google.firebase:firebase-ml-modeldownloader-ktx"}
 tensorflowLite = {module = "org.tensorflow:tensorflow-lite", version.ref="tensorflowLite"}
 tensorflowSupport = {module="org.tensorflow:tensorflow-lite-support", version.ref="tensorflowSupport"}
