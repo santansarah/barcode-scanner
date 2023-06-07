@@ -1,5 +1,5 @@
 [versions]
-com-android-application = "8.1.0-beta01"
+com-android-application = "8.2.0-alpha06"
 org-jetbrains-kotlin-android = "1.8.10"
 core-ktx = "1.9.0"
 junit = "4.13.2"
@@ -75,6 +75,8 @@ firebaseMl = {module = "com.google.firebase:firebase-ml-modeldownloader-ktx"}
 tensorflowLite = {module = "org.tensorflow:tensorflow-lite", version.ref="tensorflowLite"}
 tensorflowSupport = {module="org.tensorflow:tensorflow-lite-support", version.ref="tensorflowSupport"}
 tensorflowOps = {module="org.tensorflow:tensorflow-lite-select-tf-ops", version.ref="tensorflowOps"}
+
+firebaseAuth = {module="com.google.firebase:firebase-auth-ktx"}
 
 [plugins]
 com-android-application = { id = "com.android.application", version.ref = "com-android-application" }

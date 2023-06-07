@@ -120,7 +120,7 @@ fun SearchLoadingScreen(
                      */
                     Text(
                         modifier = Modifier
-                            .padding(bottom = 14.dp),
+                            .padding(start = 8.dp, end = 8.dp, bottom = 14.dp),
                         text = initialLoadErrorMessage,
                         style = TextStyle(
                             color = redishMagenta,

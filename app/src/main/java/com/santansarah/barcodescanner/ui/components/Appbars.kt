@@ -2,9 +2,12 @@ package com.santansarah.barcodescanner.ui.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -19,7 +22,8 @@ import com.santansarah.barcodescanner.ui.theme.lightestGray
 @Composable
 fun MainAppBar(
     title: String,
-    onBackClicked: (() -> Unit)?
+    onBackClicked: (() -> Unit)?,
+    onAccountClicked: () -> Unit
 ) {
     Column {
         CenterAlignedTopAppBar(
@@ -37,6 +41,13 @@ fun MainAppBar(
                     IconButton(onClick = onBackClicked) {
                         BackIcon(contentDesc = "Go Back")
                     }
+            },
+            actions = {
+                IconButton(onClick = { onAccountClicked() }) {
+                    Icon(
+                        imageVector = Icons.Outlined.AccountCircle,
+                        contentDescription = "Account")
+                }
             }
         )
         Divider(thickness = 2.dp, color = Color.DarkGray)

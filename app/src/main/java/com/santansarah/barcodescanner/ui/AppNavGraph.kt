@@ -7,10 +7,11 @@ import androidx.navigation.compose.composable
 import com.santansarah.barcodescanner.domain.models.AppDestinations.HOME
 import com.santansarah.barcodescanner.domain.models.AppDestinations.PRODUCT_DETAIL
 import com.santansarah.barcodescanner.domain.models.AppDestinations.SEARCH
-import com.santansarah.barcodescanner.domain.models.AppRoutes
+import com.santansarah.barcodescanner.domain.models.AppDestinations.ACCOUNT
 import com.santansarah.barcodescanner.domain.models.AppRoutes.HOME_SCREEN
 import com.santansarah.barcodescanner.domain.models.AppRoutes.PRODUCT_DETAIL_SCREEN
 import com.santansarah.barcodescanner.domain.models.AppRoutes.SEARCH_SCREEN
+import com.santansarah.barcodescanner.ui.account.AccountScreen
 import com.santansarah.barcodescanner.ui.productdetail.ProductDetailsRoute
 import com.santansarah.barcodescanner.ui.search.SearchRoute
 
@@ -31,14 +32,23 @@ fun AppNavGraph(
                 },
                 onSearchClicked = { searchText ->
                     navController.navigate("$SEARCH_SCREEN/$searchText")
+                },
+                onAccountClicked = {
+                    navController.navigate(ACCOUNT)
                 }
             )
         }
         composable(PRODUCT_DETAIL) {
             ProductDetailsRoute(onBackClicked = { navController.popBackStack() },
                 onGotBarcode = { barcode ->
-                navController.navigate("$PRODUCT_DETAIL_SCREEN/$SEARCH_SCREEN/$barcode")
-            },)
+                    navController.navigate("$PRODUCT_DETAIL_SCREEN/$SEARCH_SCREEN/$barcode")
+                },
+                onSignIn = {
+                    navController.navigate(ACCOUNT)
+                })
+        }
+        composable(ACCOUNT) {
+            AccountScreen()
         }
         composable(SEARCH) {
             SearchRoute(onBackClicked = { navController.popBackStack() },

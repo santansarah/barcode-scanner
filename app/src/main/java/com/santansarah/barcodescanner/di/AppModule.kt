@@ -4,14 +4,17 @@ import android.content.Context
 import coil.ImageLoader
 import coil.disk.DiskCache
 import coil.memory.MemoryCache
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.santansarah.barcodescanner.BarcodeScanner
 import com.santansarah.barcodescanner.RecommendationService
 import com.santansarah.barcodescanner.data.remote.FoodApi
 import com.santansarah.barcodescanner.data.remote.FoodRepository
+import com.santansarah.barcodescanner.data.local.UserRepository
 import com.santansarah.barcodescanner.domain.OFFAPI
+import com.santansarah.barcodescanner.domain.interfaces.IUserRepository
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -33,11 +36,19 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 import javax.inject.Qualifier
 import javax.inject.Singleton
+
+
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class SignInModule {
+    @Singleton
+    @Binds
+    abstract fun provideFirebaseSignIn(userRepository: UserRepository): IUserRepository
+}
 
 
 @InstallIn(SingletonComponent::class)
@@ -46,13 +57,16 @@ object AppModules {
 
     @Singleton
     @Provides
+    fun provideFirebaseAuth() = Firebase.auth
+
+    @Singleton
+    @Provides
     @IoDispatcher
     fun provideIoDispatcher() = Dispatchers.IO
 
     @Provides
     @Singleton
-    fun provideBarcodeScanner(@ApplicationContext appContext: Context)
-    = BarcodeScanner(appContext)
+    fun provideBarcodeScanner(@ApplicationContext appContext: Context) = BarcodeScanner(appContext)
 
     @Provides
     @Singleton
@@ -101,8 +115,10 @@ object AppModules {
 
         return Retrofit.Builder()
             .baseUrl(OFFAPI)
-            .addConverterFactory(jsonBuilder
-                .asConverterFactory(contentType))
+            .addConverterFactory(
+                jsonBuilder
+                    .asConverterFactory(contentType)
+            )
             .client(client)
             .build()
             .create(FoodApi::class.java)
@@ -133,8 +149,10 @@ object AppModules {
 
     @Provides
     @Singleton
-    fun provideRecommendationService(foodRepository: FoodRepository,
-                                     @IoDispatcher dispatcher: CoroutineDispatcher) =
+    fun provideRecommendationService(
+        foodRepository: FoodRepository,
+        @IoDispatcher dispatcher: CoroutineDispatcher
+    ) =
         RecommendationService(foodRepository, dispatcher)
 }
 

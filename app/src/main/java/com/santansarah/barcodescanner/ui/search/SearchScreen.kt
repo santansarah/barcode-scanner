@@ -104,7 +104,8 @@ fun ShowSearchResults(
         topBar = {
             MainAppBar(
                 onBackClicked = onBackClicked,
-                title = "Search Results"
+                title = "Search Results",
+                onAccountClicked = {}
             )
         }
     ) { padding ->

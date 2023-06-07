@@ -28,7 +28,7 @@ import kotlin.math.ceil
  * is just a Retrofit interface, and the product that a user's
  * searching for.
  */
-class ProductSearchPagingSource constructor(
+class ProductSearchPagingSource(
     private val foodApi: FoodApi,
     private val searchText: String
 ) : PagingSource<Int, SearchProductItem>() {

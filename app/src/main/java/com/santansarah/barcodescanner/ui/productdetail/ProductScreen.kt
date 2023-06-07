@@ -40,7 +40,8 @@ import timber.log.Timber
 fun ProductDetailsRoute(
     viewModel: ProductDetailViewModel = hiltViewModel(),
     onBackClicked: () -> Unit,
-    onGotBarcode: (String) -> Unit
+    onGotBarcode: (String) -> Unit,
+    onSignIn: () -> Unit
 ) {
 
     val productDetailState = viewModel.productDetailState.collectAsStateWithLifecycle().value
@@ -65,7 +66,8 @@ fun ProductDetailsRoute(
         onRetry = viewModel::getProductDetail,
         onRescan = viewModel::scanBarcode,
         similarItemListing = similarItems,
-        onGotBarcode = onGotBarcode
+        onGotBarcode = onGotBarcode,
+        onSignIn = onSignIn
     )
 
 }
@@ -82,14 +84,16 @@ fun ItemDetails(
     onRetry: (String) -> Unit,
     onRescan: () -> Unit,
     similarItemListing: List<SimilarItemListing>,
-    onGotBarcode: (String) -> Unit
+    onGotBarcode: (String) -> Unit,
+    onSignIn: () -> Unit
 ) {
 
     Scaffold(
         topBar = {
             MainAppBar(
                 onBackClicked = onBackClicked,
-                title = code
+                title = code,
+                onAccountClicked = {}
             )
         }
     ) { padding ->
@@ -104,7 +108,8 @@ fun ItemDetails(
              * If the product error message isn't null, it's passed to my Product Image
              * composable.
              */
-            ProductImage(product, isLoading, productError, fromScreen, code, onRetry, onRescan)
+            ProductImage(product, isLoading, productError,
+                fromScreen, code, onRetry, onRescan, onSignIn)
 
             Spacer(modifier = Modifier.height(20.dp))
 
@@ -147,7 +152,8 @@ fun PreviewItemDetails() {
             onBackClicked = {}, code = item.code, productError = null, fromScreen = HOME,
             onRetry = {}, onRescan = {},
             similarItemListing = similarProducts,
-            onGotBarcode = {}
+            onGotBarcode = {},
+            onSignIn = {}
         )
     }
 
@@ -169,7 +175,8 @@ fun PreviewNotFound() {
             onBackClicked = {}, code = item.code, productError = null,
             fromScreen = SEARCH, onRetry = {}, onRescan = {},
             similarItemListing = similarProducts,
-            onGotBarcode = {}
+            onGotBarcode = {},
+            onSignIn = {}
         )
     }
 
@@ -192,8 +199,8 @@ fun PreviewApiError() {
             productError = com.santansarah.barcodescanner.domain.ErrorCode.API_PRODUCT_TIMEOUT.message,
             fromScreen = SEARCH, onRetry = {}, onRescan = {},
             similarItemListing = similarProducts,
-            onGotBarcode = {}
-        )
+            onGotBarcode = {},
+            onSignIn = {}        )
     }
 
 }

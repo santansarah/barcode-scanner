@@ -90,6 +90,7 @@ dependencies {
     implementation(libs.tensorflowLite)
     implementation(libs.tensorflowSupport)
     implementation(libs.tensorflowOps)
+    implementation(libs.firebaseAuth)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)

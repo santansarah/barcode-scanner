@@ -51,7 +51,8 @@ fun ProductImage(
     fromScreen: String,
     barcode: String,
     onRetry: (String) -> Unit,
-    onRescan: () -> Unit
+    onRescan: () -> Unit,
+    onSignIn: () -> Unit
 ) {
 
     ElevatedCard(
@@ -133,6 +134,7 @@ fun ProductImage(
                     ProductDetailError(errorMessage = barcodeMessage, onRetry = onRescan)
                 }
             } else {
+                UserActions(onSignIn)
                 ItemImageSlider(
                     imgFront = product?.imgFrontUrl,
                     imgBack = product?.imgNutritionUrl
@@ -205,7 +207,7 @@ fun PreviewProductImageLoading(
             isLoading = featureParams.isLoading,
             productError = featureParams.errorMessage,
             fromScreen = featureParams.fromScreen,
-            barcode = featureParams.barcode, {}, {}
+            barcode = featureParams.barcode, {}, {}, {}
         )
     }
 }

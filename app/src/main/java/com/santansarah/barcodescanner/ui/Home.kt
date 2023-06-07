@@ -86,12 +86,12 @@ import com.santansarah.barcodescanner.ui.theme.redishMagenta
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeRoute(
     viewModel: HomeViewModel = hiltViewModel(),
     onGotBarcode: (String) -> Unit,
     onSearchClicked: (String) -> Unit,
+    onAccountClicked: () -> Unit
 ) {
 
     val barcodeResults = viewModel.barcode.collectAsStateWithLifecycle().value
@@ -104,22 +104,26 @@ fun HomeRoute(
         }
     }
 
-    HomeScreen(onScan = viewModel::scanBarcode, onSearch = onSearchClicked)
+    HomeScreen(onScan = viewModel::scanBarcode,
+        onSearch = onSearchClicked,
+        onAccountClicked = onAccountClicked)
 
 }
 
-@OptIn(ExperimentalTextApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     onScan: () -> Unit,
-    onSearch: (String) -> Unit
+    onSearch: (String) -> Unit,
+    onAccountClicked: () -> Unit
 ) {
 
     Scaffold(
         topBar = {
             MainAppBar(
                 onBackClicked = null,
-                title = "Welcome"
+                title = "Welcome",
+                onAccountClicked = onAccountClicked
             )
         }
     ) { padding ->
@@ -282,7 +286,7 @@ fun HomeScreen(
 fun PreviewHomeScreen() {
 
     BarcodeScannerTheme {
-        HomeScreen(onScan = { /*TODO*/ }, onSearch = {})
+        HomeScreen(onScan = { /*TODO*/ }, onSearch = {}, onAccountClicked = {})
     }
 
 }
