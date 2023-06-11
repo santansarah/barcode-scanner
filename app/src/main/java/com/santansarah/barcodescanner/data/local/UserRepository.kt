@@ -1,11 +1,14 @@
 package com.santansarah.barcodescanner.data.local
 
+import com.google.firebase.auth.ActionCodeSettings
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import com.google.firebase.auth.ktx.actionCodeSettings
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.santansarah.barcodescanner.domain.interfaces.IUserRepository
+import com.santansarah.barcodescanner.domain.models.PhoneAuthState
 import com.santansarah.barcodescanner.domain.models.User
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.awaitClose
@@ -32,10 +35,13 @@ class UserRepository @Inject constructor() : IUserRepository {
      */
     override val currentUser: User?
         get() = auth.currentUser?.let {
+            Timber.d("user: ${it.isEmailVerified}")
             User(
                 email = it.email!!,
                 displayName = it.displayName,
-                profileUrl = it.photoUrl?.path
+                profileUrl = it.photoUrl?.path,
+                phoneNumber = it.phoneNumber,
+                isEmailVerified = it.isEmailVerified
             )
         }
 
@@ -52,11 +58,25 @@ class UserRepository @Inject constructor() : IUserRepository {
     override suspend fun signUp(email: String, password: String): Boolean {
         return try {
             val authResult = auth.createUserWithEmailAndPassword(email, password).await()
+            verifyEmail()
             (authResult.user != null)
         } catch (e: Exception) {
             signInError.value = e.message
             Timber.d(e.message)
             false
+        }
+    }
+
+    override suspend fun verifyEmail() {
+        try {
+            val actionCodeSettings = actionCodeSettings {
+                url = "https://github.com/santansarah"
+            }
+            auth.currentUser?.sendEmailVerification(actionCodeSettings)?.await()
+            Timber.d("email sent")
+        } catch (e: Exception) {
+            Timber.d("verify email error: $e")
+            signInError.value = e.message
         }
     }
 

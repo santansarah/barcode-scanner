@@ -12,6 +12,7 @@ interface IUserRepository {
 
     fun userSignedIn(scope: CoroutineScope): Flow<Boolean>
     suspend fun signIn(email: String, password: String): Boolean
+    suspend fun verifyEmail()
     suspend fun signUp(email: String, password: String): Boolean
     suspend fun signOut()
 

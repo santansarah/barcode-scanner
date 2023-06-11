@@ -41,7 +41,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
         // Downloading could take some time, so make sure to launch this in a
         // coroutine, so it loads in the background.
         this.lifecycleScope.launch {
