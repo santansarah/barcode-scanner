@@ -18,7 +18,8 @@ data class UserUIState(
     val password: String = "",
     val onEmailChanged: (String) -> Unit = {},
     val onPasswordChanged: (String) -> Unit = {},
-    val onVerifyEmail: () -> Unit = {}
+    val onVerifyEmail: () -> Unit = {},
+    val onSignOut: () -> Unit = {}
 )
 
 data class PhoneAuthUIState(
@@ -26,6 +27,6 @@ data class PhoneAuthUIState(
     val onPhoneChanged: (String) -> Unit = {},
     val verificationCode: String = "",
     val onVerificationCodeChanged: (String) -> Unit = {},
-    val onVerifyCode: () -> Unit = {},
+    val onVerifyCode: (Boolean) -> Unit = {},
     val onAddPhone: () -> Unit = {}
 )

@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">Barcode Scanner</string>
-    <string name="sign_in">Sign in to access more features</string>
+    <string name="sign_in">Sign up to access more features</string>
 </resources>

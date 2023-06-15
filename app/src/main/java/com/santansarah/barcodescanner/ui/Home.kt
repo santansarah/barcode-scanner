@@ -58,6 +58,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextStyle
@@ -136,7 +137,13 @@ fun HomeScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
 
-            //Divider(thickness = 2.dp, color = Color.DarkGray)
+            val uriHandler = LocalUriHandler.current
+            Button(onClick = { uriHandler.openUri("https://github.com/santansarah") }) {
+                Text(text = "Test link")
+            }
+
+
+                //Divider(thickness = 2.dp, color = Color.DarkGray)
             ElevatedCard(
                 modifier = Modifier
                     .fillMaxWidth(),

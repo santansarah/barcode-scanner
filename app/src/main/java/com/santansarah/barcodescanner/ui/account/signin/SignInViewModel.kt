@@ -1,12 +1,9 @@
-package com.santansarah.barcodescanner.ui.account.verified
+package com.santansarah.barcodescanner.ui.account.signin
 
 import androidx.lifecycle.viewModelScope
-import com.santansarah.barcodescanner.data.local.AppPreferences
-import com.santansarah.barcodescanner.data.local.AppPreferencesRepository
 import com.santansarah.barcodescanner.di.IoDispatcher
 import com.santansarah.barcodescanner.domain.interfaces.IUserRepository
 import com.santansarah.barcodescanner.domain.models.PhoneAuthUIState
-import com.santansarah.barcodescanner.ui.account.shared.SignInViewModelBase
 import com.santansarah.barcodescanner.ui.account.shared.WithPhoneViewModelBase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
@@ -17,11 +14,23 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class VerifiedViewModel @Inject constructor(
+class SignInViewModel @Inject constructor(
     @IoDispatcher val vmDispatcher: CoroutineDispatcher,
-    private val userRepository: IUserRepository,
-   // private val appPreferences: AppPreferencesRepository
-) : SignInViewModelBase(vmDispatcher, userRepository) {
+    private val userRepository: IUserRepository
+) : WithPhoneViewModelBase(vmDispatcher, userRepository) {
 
+    override val phoneAuthUIState = MutableStateFlow(
+        PhoneAuthUIState(
+            onVerificationCodeChanged = { onVerificationCodeChanged(it) },
+            onVerifyCode = { onVerifyCode(it) }
+        )
+    )
+
+    fun resendCode(userPhone: String) {
+        phoneAuthUIState.update {
+            it.copy(phone = userPhone)
+        }
+        onAddPhone()
+    }
 
 }

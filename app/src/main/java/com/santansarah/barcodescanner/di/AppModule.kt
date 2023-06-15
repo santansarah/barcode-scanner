@@ -13,9 +13,7 @@ import com.santansarah.barcodescanner.data.remote.FoodApi
 import com.santansarah.barcodescanner.data.remote.FoodRepository
 import com.santansarah.barcodescanner.data.local.UserRepository
 import com.santansarah.barcodescanner.domain.OFFAPI
-import com.santansarah.barcodescanner.domain.interfaces.IPhoneAuthorization
 import com.santansarah.barcodescanner.domain.interfaces.IUserRepository
-import com.santansarah.barcodescanner.ui.account.FirebasePhoneAuthorization
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -53,15 +51,6 @@ abstract class SignInModule {
     @Binds
     abstract fun provideFirebaseSignIn(userRepository: UserRepository): IUserRepository
 }
-
-@Module
-@InstallIn(ViewModelComponent::class)
-abstract class PhoneAuthorizationModule {
-    @ViewModelScoped
-    @Binds
-    abstract fun providePhoneAuthorization(firebasePhoneAuthorization: FirebasePhoneAuthorization): IPhoneAuthorization
-}
-
 
 @InstallIn(SingletonComponent::class)
 @Module
