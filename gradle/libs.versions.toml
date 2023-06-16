@@ -29,6 +29,8 @@ tensorflowLite = "2.9.0"
 tensorflowSupport = "0.4.3"
 tensorflowOps = "0.0.0-nightly-SNAPSHOT"
 dataStore = "1.0.0"
+# autoFill = "1.1.0"
+material = "1.9.0"
 
 [libraries]
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
@@ -79,6 +81,9 @@ tensorflowOps = {module="org.tensorflow:tensorflow-lite-select-tf-ops", version.
 
 firebaseAuth = {module="com.google.firebase:firebase-auth-ktx"}
 dataStore = {module="androidx.datastore:datastore-preferences", version.ref="dataStore"}
+# autoFill = {module="androidx.autofill:autofill", version.ref="autoFill"}
+material = {module="com.google.android.material:material", version.ref="material"}
+
 
 [plugins]
 com-android-application = { id = "com.android.application", version.ref = "com-android-application" }

@@ -93,6 +93,8 @@ dependencies {
     implementation(libs.firebaseAuth)
 
     implementation(libs.dataStore)
+    //implementation(libs.autoFill)
+    implementation(libs.material)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)

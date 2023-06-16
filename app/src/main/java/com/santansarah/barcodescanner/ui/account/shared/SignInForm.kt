@@ -1,10 +1,13 @@
 package com.santansarah.barcodescanner.ui.account.shared
 
+import android.view.LayoutInflater
+import android.widget.EditText
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
@@ -21,6 +24,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.autofill.Autofill
 import androidx.compose.ui.autofill.AutofillNode
 import androidx.compose.ui.autofill.AutofillType
 import androidx.compose.ui.focus.onFocusChanged
@@ -29,13 +33,18 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalAutofill
 import androidx.compose.ui.platform.LocalAutofillTree
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.widget.doAfterTextChanged
+import com.google.android.material.textfield.TextInputEditText
 import com.santansarah.barcodescanner.R
 import com.santansarah.barcodescanner.domain.models.UserUIState
+import com.santansarah.barcodescanner.ui.components.*
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
@@ -43,19 +52,11 @@ fun SignInForm(
     userUIState: UserUIState,
 ) {
     var passwordVisible by rememberSaveable { mutableStateOf(false) }
+    val autofill = LocalAutofill.current
 
     Column(
         modifier = Modifier.padding(horizontal = 20.dp)
     ) {
-
-        // https://bryanherbst.com/2021/04/13/compose-autofill/
-        val autofillNode = AutofillNode(
-            autofillTypes = listOf(AutofillType.EmailAddress),
-            onFill = { userUIState.onEmailChanged(it) }
-        )
-        val autofill = LocalAutofill.current
-
-        LocalAutofillTree.current += autofillNode
 
         OutlinedTextField(
             value = userUIState.email,
@@ -68,19 +69,14 @@ fun SignInForm(
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .onGloballyPositioned {
-                    autofillNode.boundingBox = it.boundsInWindow()
-                }
-                .onFocusChanged { focusState ->
-                    autofill?.run {
-                        if (focusState.isFocused) {
-                            requestAutofillForNode(autofillNode)
-                        } else {
-                            cancelAutofillForNode(autofillNode)
-                        }
-                    }
-                },
+                .autofill(
+                    autofillTypes = listOf(AutofillType.EmailAddress,
+                        AutofillType.NewUsername, AutofillType.Username),
+                    onFill = { userUIState.onEmailChanged(it) },
+                )
+
         )
+
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
@@ -99,9 +95,33 @@ fun SignInForm(
                     )
                 }
             },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth()
+                .autofill(
+                    autofillTypes = listOf(AutofillType.Password),
+                    onFill = { userUIState.onPasswordChanged(it) },
+                ),
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation()
         )
+
+        AndroidView(
+
+        modifier = Modifier
+                .fillMaxWidth(),
+            factory = { context ->
+                val layout = LayoutInflater.from(context).inflate(R.layout.password_field, null)
+                layout.findViewById<EditText>(R.id.password).apply {
+                    doAfterTextChanged {
+                        userUIState.onPasswordChanged(it.toString())
+                    }
+                }
+                layout
+            },
+            update = {
+
+            }
+        )
+
+
 
     }
 }
