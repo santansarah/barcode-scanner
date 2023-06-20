@@ -1,14 +1,22 @@
 package com.santansarah.barcodescanner.ui.account.signin
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
+import androidx.compose.material3.Divider
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -17,17 +25,23 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.santansarah.barcodescanner.R
 import com.santansarah.barcodescanner.domain.models.PhoneAuthUIState
 import com.santansarah.barcodescanner.domain.models.SignInState
 import com.santansarah.barcodescanner.domain.models.UserUIState
 import com.santansarah.barcodescanner.ui.account.shared.SignInButtons
 import com.santansarah.barcodescanner.ui.account.shared.SignInForm
 import com.santansarah.barcodescanner.ui.account.addphone.VerifyCode
+import com.santansarah.barcodescanner.ui.components.MainAppBar
+import com.santansarah.barcodescanner.ui.theme.brightYellow
 
 @Composable
 fun SignInScreen(
@@ -36,20 +50,117 @@ fun SignInScreen(
     onAccount: () -> Unit
 ) {
 
-    val newUserUIState by viewModel.userUIState.collectAsStateWithLifecycle()
+    val userUIState by viewModel.userUIState.collectAsStateWithLifecycle()
     val phoneAuthUIState by viewModel.phoneAuthUIState.collectAsStateWithLifecycle()
     val userMessage by viewModel.userMessage.collectAsStateWithLifecycle()
     val signInState by viewModel.signInState.collectAsStateWithLifecycle()
 
-    when (signInState) {
-        SignInState.SMS_AUTHORIZED, SignInState.AUTHORIZED -> {
-            UserIsSignedIn(onSearch = onSearch, onAccount = onAccount)
+    SignInContainer(
+        signInState,
+        onSearch,
+        onAccount,
+        phoneAuthUIState,
+        userMessage,
+        userUIState,
+        viewModel::onResendVerification,
+        viewModel::onSignIn
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun SignInContainer(
+    signInState: SignInState,
+    onSearch: () -> Unit,
+    onAccount: () -> Unit,
+    phoneAuthUIState: PhoneAuthUIState,
+    userMessage: String?,
+    userUIState: UserUIState,
+    onResend: () -> Unit,
+    onSignIn: () -> Unit
+) {
+
+    Scaffold(
+        topBar = {
+            MainAppBar(
+                onBackClicked = null,
+                title = "Your Account",
+                onAccountClicked = { }
+            )
         }
-        SignInState.NEEDS_2FA, SignInState.VERIFY_FAILED -> {
-            SignInWithTwoFA(phoneAuthUIState, userMessage, viewModel::onResendVerification, signInState)
-        }
-        else -> {
-            OneFactorSignIn(newUserUIState, userMessage, viewModel::onSignIn, {  })
+    ) { padding ->
+
+        Column(
+            modifier = Modifier
+                .padding(padding)
+                //.padding(top = 20.dp)
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+
+            ElevatedCard(
+                modifier = Modifier
+                    .fillMaxSize(),
+                shape = RectangleShape
+            ) {
+                Column(
+                    modifier = Modifier
+                        .background(brightYellow)
+                        .fillMaxWidth()
+                ) {
+                    Text(
+                        modifier = Modifier
+                            .padding(6.dp),
+                        text = "Sign in",
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                }
+                Divider(thickness = 2.dp, color = Color.DarkGray)
+
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 36.dp)
+                ) {
+                    Image(
+                        modifier = Modifier.size(100.dp),
+                        painter = painterResource(id = R.drawable.apple),
+                        contentDescription = "Cherries"
+                    )
+                    Image(
+                        modifier = Modifier.size(105.dp),
+                        painter = painterResource(id = R.drawable.pretzel),
+                        contentDescription = "Banana"
+                    )
+                    Image(
+                        modifier = Modifier.size(100.dp),
+                        painter = painterResource(id = R.drawable.corn),
+                        contentDescription = "Apple"
+                    )
+                }
+
+                when (signInState) {
+                    SignInState.SMS_AUTHORIZED, SignInState.AUTHORIZED -> {
+                        UserIsSignedIn(onSearch = onSearch, onAccount = onAccount)
+                    }
+
+                    SignInState.NEEDS_2FA,
+                    SignInState.VERIFY_FAILED,
+                    SignInState.CODE_SENT-> {
+                        SignInWithTwoFA(
+                            phoneAuthUIState,
+                            userMessage,
+                            onResend,
+                            signInState
+                        )
+                    }
+
+                    else -> {
+                        OneFactorSignIn(userUIState, userMessage, onSignIn, { })
+                    }
+                }
+            }
         }
     }
 }
@@ -63,19 +174,10 @@ private fun SignInWithTwoFA(
     signInState: SignInState
 ) {
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
             .padding(horizontal = 20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            modifier = Modifier.padding(bottom = 10.dp),
-            text = "We've sent a verification code to your phone.",
-            style = MaterialTheme.typography.headlineMedium,
-            textAlign = TextAlign.Center
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
         VerifyCode(
             phoneAuthUIState = phoneAuthUIState,
             userMessage = userMessage,
@@ -93,10 +195,8 @@ fun UserIsSignedIn(
 ) {
 
     Column(
-        modifier = Modifier.fillMaxSize()
-            .padding(horizontal = 20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        modifier = Modifier.padding(horizontal = 20.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             modifier = Modifier.padding(bottom = 10.dp),
@@ -104,6 +204,8 @@ fun UserIsSignedIn(
             style = MaterialTheme.typography.headlineMedium,
             textAlign = TextAlign.Center
         )
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         Button(
             modifier = Modifier.fillMaxWidth(),
@@ -129,20 +231,19 @@ fun OneFactorSignIn(
     onCancel: () -> Unit
 ) {
     Column(
-        modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
     ) {
 
         Text(
             modifier = Modifier.padding(
                 start = 20.dp,
                 end = 20.dp,
-                bottom = 10.dp
+                bottom = 20.dp
             ),
             text = "Welcome back. If you've added your phone for 2FA, " +
                     "make sure to have it available.",
-            style = MaterialTheme.typography.headlineSmall
+            style = MaterialTheme.typography.headlineSmall,
+            textAlign = TextAlign.Center
         )
 
         SignInForm(
@@ -169,10 +270,15 @@ fun SignInPreview() {
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
 
-    OneFactorSignIn(userUIState = UserUIState(), 
-        userMessage = null, 
-        onSignIn = { /*TODO*/ }) {
-        
+    SignInContainer(
+        signInState = SignInState.NOT_SIGNED_IN,
+        onSearch = { /*TODO*/ },
+        onAccount = { /*TODO*/ },
+        phoneAuthUIState = PhoneAuthUIState(),
+        userMessage = null,
+        userUIState = UserUIState(),
+        onResend = { /*TODO*/ }) {
+
     }
 }
 
@@ -183,9 +289,15 @@ fun VerifyCodePreview() {
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
 
-    Column {
-        SignInWithTwoFA(phoneAuthUIState = PhoneAuthUIState(), userMessage = null, {}, SignInState.NEEDS_2FA)
-        SignInWithTwoFA(phoneAuthUIState = PhoneAuthUIState(), userMessage = "Verification failed.", {}, SignInState.NEEDS_2FA)
+    SignInContainer(
+        signInState = SignInState.NEEDS_2FA,
+        onSearch = { /*TODO*/ },
+        onAccount = { /*TODO*/ },
+        phoneAuthUIState = PhoneAuthUIState(),
+        userMessage = "Verification failed",
+        userUIState = UserUIState(),
+        onResend = { /*TODO*/ }) {
+
     }
 }
 
@@ -196,9 +308,15 @@ fun SignedInPreview() {
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
 
-    UserIsSignedIn(onSearch = { /*TODO*/ }) {
-        
+    SignInContainer(
+        signInState = SignInState.AUTHORIZED,
+        onSearch = { /*TODO*/ },
+        onAccount = { /*TODO*/ },
+        phoneAuthUIState = PhoneAuthUIState(),
+        userMessage = null,
+        userUIState = UserUIState(),
+        onResend = { /*TODO*/ }) {
+
     }
 }
-
 

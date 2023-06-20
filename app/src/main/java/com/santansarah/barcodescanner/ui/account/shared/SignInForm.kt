@@ -21,13 +21,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.autofill.AutofillNode
 import androidx.compose.ui.autofill.AutofillType
-import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.layout.boundsInWindow
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalAutofill
-import androidx.compose.ui.platform.LocalAutofillTree
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -36,6 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.santansarah.barcodescanner.R
 import com.santansarah.barcodescanner.domain.models.UserUIState
+import com.santansarah.barcodescanner.ui.components.autofill
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
@@ -48,15 +43,6 @@ fun SignInForm(
         modifier = Modifier.padding(horizontal = 20.dp)
     ) {
 
-        // https://bryanherbst.com/2021/04/13/compose-autofill/
-        val autofillNode = AutofillNode(
-            autofillTypes = listOf(AutofillType.EmailAddress),
-            onFill = { userUIState.onEmailChanged(it) }
-        )
-        val autofill = LocalAutofill.current
-
-        LocalAutofillTree.current += autofillNode
-
         OutlinedTextField(
             value = userUIState.email,
             onValueChange = { userUIState.onEmailChanged(it) },
@@ -68,19 +54,14 @@ fun SignInForm(
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .onGloballyPositioned {
-                    autofillNode.boundingBox = it.boundsInWindow()
-                }
-                .onFocusChanged { focusState ->
-                    autofill?.run {
-                        if (focusState.isFocused) {
-                            requestAutofillForNode(autofillNode)
-                        } else {
-                            cancelAutofillForNode(autofillNode)
-                        }
-                    }
-                },
+                .autofill(
+                    autofillTypes = listOf(AutofillType.EmailAddress,
+                        AutofillType.NewUsername, AutofillType.Username),
+                    onFill = { userUIState.onEmailChanged(it) },
+                )
+
         )
+
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
@@ -99,7 +80,11 @@ fun SignInForm(
                     )
                 }
             },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth()
+                .autofill(
+                    autofillTypes = listOf(AutofillType.Password),
+                    onFill = { userUIState.onPasswordChanged(it) },
+                ),
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation()
         )
 

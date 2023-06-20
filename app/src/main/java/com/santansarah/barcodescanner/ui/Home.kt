@@ -137,12 +137,6 @@ fun HomeScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
 
-            val uriHandler = LocalUriHandler.current
-            Button(onClick = { uriHandler.openUri("https://github.com/santansarah") }) {
-                Text(text = "Test link")
-            }
-
-
                 //Divider(thickness = 2.dp, color = Color.DarkGray)
             ElevatedCard(
                 modifier = Modifier

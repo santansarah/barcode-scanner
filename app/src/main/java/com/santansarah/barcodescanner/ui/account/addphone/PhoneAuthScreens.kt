@@ -33,6 +33,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.santansarah.barcodescanner.domain.models.PhoneAuthUIState
@@ -147,8 +148,17 @@ fun VerifyCode(
     ) {
 
         Text(
+            modifier = Modifier.padding(bottom = 10.dp),
+            text = "We've sent a verification code to your phone.",
+            style = MaterialTheme.typography.headlineMedium,
+            textAlign = TextAlign.Center
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
             text = "Enter your verification code:",
-            style = MaterialTheme.typography.headlineSmall,
+            //style = MaterialTheme.typography.headlineSmall,
         )
         Spacer(modifier = Modifier.height(16.dp))
         OutlinedTextField(
@@ -159,7 +169,7 @@ fun VerifyCode(
 
         userMessage?.let {
             Spacer(modifier = Modifier.height(16.dp))
-            Text(text = it)
+            Text(text = it, color = MaterialTheme.colorScheme.error)
         }
 
         Spacer(modifier = Modifier.height(26.dp))
@@ -169,7 +179,7 @@ fun VerifyCode(
             onClick = {
                 phoneAuthUIState.onVerifyCode(isNew)
             }) {
-            Text(text = "Verify Code")
+            Text(text = "Continue")
         }
 
         Spacer(modifier = Modifier.height(16.dp))

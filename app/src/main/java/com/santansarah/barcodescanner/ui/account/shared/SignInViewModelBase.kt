@@ -20,10 +20,7 @@ import timber.log.Timber
 abstract class SignInViewModelBase(
     val dispatcher: CoroutineDispatcher,
     private val userRepository: IUserRepository,
-    //private val appPreferences: AppPreferencesRepository
 ) : ViewModel() {
-
-    //val userAppPreferences = appPreferences.appPreferencesFlow
 
     val userUIState = MutableStateFlow(
         UserUIState(onEmailChanged = { onEmailChanged(it) },
