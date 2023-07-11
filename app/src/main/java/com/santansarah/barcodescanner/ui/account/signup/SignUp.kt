@@ -203,10 +203,11 @@ fun SentVerificationEmail(
 
         Text(
             modifier = Modifier.padding(horizontal = 20.dp),
-            text = "Success! We've sent an email verification link to ${userUIState.email}." +
+            text = "Success! We've sent an email verification link to" +
+                    "\n${userUIState.email}." +
                     "\n\nOnce it's verified, " +
                     "click continue to complete the sign up process.",
-            style = MaterialTheme.typography.headlineMedium,
+            style = MaterialTheme.typography.headlineSmall,
             textAlign = TextAlign.Center
         )
     }
@@ -239,7 +240,7 @@ fun SignInSuccessPreview() {
 
     BarcodeScannerTheme {
         SignUpContainer(
-            UserUIState(email = "test@mail.com"),
+            UserUIState(email = "santantester@gmail.com"),
             SignInState.VERIFYING_EMAIL,
             "Invalid credentials.",
             {}, {})
